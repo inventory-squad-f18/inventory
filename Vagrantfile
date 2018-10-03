@@ -67,9 +67,9 @@ Vagrant.configure(2) do |config|
   SHELL
 
   # Add Redis docker container
-  config.vm.provision "docker" do |d|
-    d.pull_images "redis:alpine"
-    d.run "redis:alpine",
-      args: "--restart=always -d --name redis -h redis -p 6379:6379 -v /var/lib/redis/data:/data"
-  end
+  #config.vm.provision "docker" do |d|
+  #  d.pull_images "redis:alpine"
+  #  d.run "redis:alpine",
+  #    args: "--restart=always -d --name redis -h redis -p 6379:6379 -v /var/lib/redis/data:/data"
+  #end
 end
