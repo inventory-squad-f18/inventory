@@ -6,22 +6,11 @@ import os
 import sys
 import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
-# from models import Pet, DataValidationError
+from flask_api import status
+# from models import Inventory, DataValidationError
 
-# Pull options from environment
-DEBUG = (os.getenv('DEBUG', 'False') == 'True')
-PORT = os.getenv('PORT', '5000')
-
-# Create Flask application
-app = Flask(__name__)
-
-# Status Codes
-HTTP_200_OK = 200
-HTTP_201_CREATED = 201
-HTTP_204_NO_CONTENT = 204
-HTTP_400_BAD_REQUEST = 400
-HTTP_404_NOT_FOUND = 404
-HTTP_409_CONFLICT = 409
+#import flask application
+from . import app
 
 ######################################################################
 # GET INDEX
@@ -31,7 +20,7 @@ def index():
     """ Return something useful by default """
     return jsonify(name='Inventory REST API Service',
                    version='1.0',
-                   url=url_for('list_inventory', _external=True)), HTTP_200_OK
+                   url=url_for('list_inventory', _external=True)), status.HTTP_200_OK
 
 
 ######################################################################
@@ -41,12 +30,26 @@ def index():
 def list_inventory():
     return
 
+
 ######################################################################
-#   M A I N
+#   U T I L I T Y   F U N C T I O N S
 ######################################################################
-if __name__ == "__main__":
-    print "*********************************"
-    print " I N V E N T O R Y   S E R V I C E "
-    print "*********************************"
-    # dummy data for testing
-    app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
+def initialize_logging(log_level=logging.INFO):
+    """ Initialized the default logging to STDOUT """
+    if not app.debug:
+        print 'Setting up logging...'
+        # Set up default logging for submodules to use STDOUT
+        # datefmt='%m/%d/%Y %I:%M:%S %p'
+        fmt = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+        logging.basicConfig(stream=sys.stdout, level=log_level, format=fmt)
+        # Make a new log handler that uses STDOUT
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter(fmt))
+        handler.setLevel(log_level)
+        # Remove the Flask default handlers and use our own
+        handler_list = list(app.logger.handlers)
+        for log_handler in handler_list:
+            app.logger.removeHandler(log_handler)
+        app.logger.addHandler(handler)
+        app.logger.setLevel(log_level)
+        app.logger.info('Logging handler established')
