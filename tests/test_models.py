@@ -51,5 +51,17 @@ class TestModels(unittest.TestCase):
         except:
             pass
 
-    # def test_to_json(self):
-    #     Inventory
+    def test_to_json(self):
+        item = Inventory(id= 101, data=(1000, 100, 10, "new"))
+        json_val = item.to_json()
+        self.assertIsInstance(json_val, dict)
+        self.assertIn('id', json_val.keys())
+        self.assertIn('count', json_val.keys())
+        self.assertIn('restock-level', json_val.keys())
+        self.assertIn('reorder-point', json_val.keys())
+        self.assertIn('condition', json_val.keys())
+        self.assertEqual(json_val['id'], 101)
+        self.assertEqual(json_val['count'], 1000)
+        self.assertEqual(json_val['restock-level'], 100)
+        self.assertEqual(json_val['reorder-point'], 10)
+        self.assertEqual(json_val['condition'], "new")

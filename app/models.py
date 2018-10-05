@@ -31,4 +31,4 @@ class Inventory(object):
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
-        return {}
+        return {"id": self.id, "count": self.data[0], "restock-level": self.data[1], "reorder-point": self.data[2], "condition": self.data[3]}
