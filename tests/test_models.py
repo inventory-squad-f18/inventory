@@ -52,6 +52,7 @@ class TestModels(unittest.TestCase):
             pass
 
     def test_to_json(self):
+        """ Test serialization of item to json """
         item = Inventory(id= 101, data=(1000, 100, 10, "new"))
         json_val = item.to_json()
         self.assertIsInstance(json_val, dict)
@@ -65,3 +66,24 @@ class TestModels(unittest.TestCase):
         self.assertEqual(json_val['restock-level'], 100)
         self.assertEqual(json_val['reorder-point'], 10)
         self.assertEqual(json_val['condition'], "new")
+
+
+    def test_from_json(self):
+        """ Test deserialization of a item from json """
+        data = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        item = Inventory.from_json(data)
+        self.assertNotEqual(item, None)
+        self.assertEqual(item.id, 1)
+        self.assertEqual(item.data[0], 1000)
+        self.assertEqual(item.data[1], 100)
+        self.assertEqual(item.data[2], 10)
+        self.assertEqual(item.data[3], "open-box")
+        try:
+            self.assertRaises(DataValidationError, Inventory.from_json("test"))
+        except:
+            pass
+        data = {"id": 1, "count": 1000, "restock-point": 100, "reorder-point": 10, "condition": "open-box"}
+        try:
+            self.assertRaises(DataValidationError, Inventory.from_json(data))
+        except:
+            pass

@@ -8,6 +8,8 @@ class DataValidationError(Exception):
 
 class Inventory(object):
     data = {}
+
+
     def __init__(self, id, data):
         if not isinstance(id, int):
             raise DataValidationError("Invalid data: expected int in id, received " + type(id))
@@ -32,3 +34,14 @@ class Inventory(object):
     def to_json(self):
         """ serializes an inventory item into an dictionary """
         return {"id": self.id, "count": self.data[0], "restock-level": self.data[1], "reorder-point": self.data[2], "condition": self.data[3]}
+
+    @staticmethod
+    def from_json(json_val):
+        """ deserializes inventory item from an dictionary """
+        if not isinstance(json_val, dict):
+            raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
+        try:
+            data = (json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            return Inventory(json_val['id'], data)
+        except KeyError as error:
+            raise DataValidationError("Invalid data: missing " + error.args[0])
