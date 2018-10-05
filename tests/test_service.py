@@ -46,4 +46,8 @@ class TestInventoryService(unittest.TestCase):
 
         #initialize and check whether there is atleast one logger handler
         service.initialize_logging()
-        self.assertTrue(len(self.app.logger.handlers) > 0)
+        self.assertTrue(len(self.app.logger.handlers) == 1)
+
+        #test whether our function is removing previous handlers correctly
+        service.initialize_logging()
+        self.assertTrue(len(self.app.logger.handlers) == 1)
