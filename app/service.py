@@ -43,11 +43,11 @@ def list_inventory():
 
 
 ######################################################################
-# RETRIEVE A PET
+# RETRIEVE A Inventory
 ######################################################################
 @app.route('/inventory/<int:inventory_id>', methods=['GET'])
 def get_inventory(inventory_id):
-    """ Retrieves a Pet with a specific id """
+    """ Retrieves a Inventory with a specific id """
     app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
 
     inventory = Inventory.find(inventory_id)
@@ -61,7 +61,7 @@ def get_inventory(inventory_id):
     return jsonify(message), return_code
 
 ######################################################################
-# ADD A NEW PET
+# ADD A NEW Inventory
 ######################################################################
 @app.route('/inventory', methods=['POST'])
 def create_inventory():
