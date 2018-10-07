@@ -11,6 +11,17 @@ from flask_api import status
 
 #import flask application
 from . import app
+from models import Inventory
+
+
+
+# Status Codes
+HTTP_200_OK = 200
+HTTP_201_CREATED = 201
+HTTP_204_NO_CONTENT = 204
+HTTP_400_BAD_REQUEST = 400
+HTTP_404_NOT_FOUND = 404
+HTTP_409_CONFLICT = 409
 
 ######################################################################
 # GET INDEX
@@ -30,6 +41,38 @@ def index():
 def list_inventory():
     return
 
+
+######################################################################
+# RETRIEVE A Inventory
+######################################################################
+@app.route('/inventory/<int:inventory_id>', methods=['GET'])
+def get_inventory(inventory_id):
+    """ Retrieves a Inventory with a specific id """
+    app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
+
+    inventory = Inventory.find(inventory_id)
+    if inventory:
+        message = inventory.to_json()
+        return_code = HTTP_200_OK
+    else:
+        message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
+        return_code = HTTP_404_NOT_FOUND
+
+    return jsonify(message), return_code
+
+######################################################################
+# ADD A NEW Inventory
+######################################################################
+@app.route('/inventory', methods=['POST'])
+def create_inventory():
+    """ Creates a inventory, not persistent """
+    app.logger.info('Creating a new inventory')
+    payload = request.get_json()
+    inventory = Inventory.from_json(payload)
+    message = inventory.to_json()
+    response = make_response(jsonify(message), HTTP_201_CREATED)
+    response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
+    return response
 
 ######################################################################
 #   U T I L I T Y   F U N C T I O N S

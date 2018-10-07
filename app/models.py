@@ -7,7 +7,7 @@ class DataValidationError(Exception):
     pass
 
 class Inventory(object):
-    data = {}
+    data = []
 
 
     def __init__(self, id, data):
@@ -30,6 +30,13 @@ class Inventory(object):
         self.id = id
         self.data = data
 
+    def save(self):
+        """
+        Saves a Pet to the data store
+        """
+        # if id is duplicate?, if needs update
+        Inventory.data.append(self)
+
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
@@ -45,3 +52,16 @@ class Inventory(object):
             return Inventory(json_val['id'], data)
         except KeyError as error:
             raise DataValidationError("Invalid data: missing " + error.args[0])
+    
+    @classmethod
+    def find(cls, inventory_id):
+        """ Finds a inventory by it's ID """
+        print "cls.data ",cls,cls.data
+        if not cls.data:
+            return None
+        inventory = [inventory for inventory in cls.data if inventory.id == inventory_id]
+        if inventory:
+            return inventory[0]
+        return None
+
+
