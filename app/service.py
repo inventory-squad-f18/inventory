@@ -68,11 +68,40 @@ def create_inventory():
     """ Creates a inventory, not persistent """
     app.logger.info('Creating a new inventory')
     payload = request.get_json()
-    inventory = Inventory.from_json(payload)
+    inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
+    inventory.from_json(payload)
+    inventory.save()
     message = inventory.to_json()
     response = make_response(jsonify(message), HTTP_201_CREATED)
     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
     return response
+
+######################################################################
+# UPDATE AN EXISTING INVENTORY
+######################################################################
+@app.route('/inventory/<int:inventory_id>', methods=['PUT'])
+def update_inventory(inventory_id):
+    """ Updates a Inventory in the database """
+    app.logger.info('Updating a inventory')
+    inventory = Inventory.find(inventory_id)
+    if inventory:
+        print "find inventory ",inventory.to_json()
+        payload = request.get_json()
+
+
+        payload["id"]=inventory_id
+        inventory.from_json(payload)
+
+        print "payload ",payload,type(payload),inventory.to_json()
+
+        inventory.save()
+        message = inventory.to_json()
+        return_code = HTTP_200_OK
+    else:
+        message = {'error' : 'Inventory with id: %s was not found' % str(id)}
+        return_code = HTTP_404_NOT_FOUND
+
+    return jsonify(message), return_code
 
 ######################################################################
 #   U T I L I T Y   F U N C T I O N S

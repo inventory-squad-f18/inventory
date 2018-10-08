@@ -75,6 +75,35 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(new_json['count'], 1000)
         self.assertEqual(new_json, new_inventory)
 
+    def test_update_inventory(self):
+        """ Update an existing Inventory """
+        # create a inventory with id 101 first
+        # item = Inventory(id = 101, data=(1000, 100, 10, "new"))
+        # item.save()
+        inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(inventory1)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+        # update the inventory with id 101
+        new_inventory = {"count": 900, "restock-level": 90, "reorder-point": 9, "condition": "new"}
+        data = json.dumps(new_inventory)
+        resp = self.app.put('/inventory/101', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        resp = self.app.get('/inventory/101', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+
+        self.assertEqual(new_json['count'], 900)
+        self.assertEqual(new_json['restock-level'], 90)
+        self.assertEqual(new_json['reorder-point'], 9)
+
+    def test_update_inventory_not_found(self):
+        """ Update a Inventory that can't be found """
+        new_inventory = {"count": 900, "restock-level": 90, "reorder-point": 9, "condition": "new"}
+        data = json.dumps(new_inventory)
+        resp = self.app.put('/inventory/0', data=data, content_type='application/json')
+        self.assertEquals(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+
     def test_initialize_logging(self):
         """ Test the Logging Service """
 
