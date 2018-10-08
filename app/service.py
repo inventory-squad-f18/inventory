@@ -68,7 +68,9 @@ def create_inventory():
     """ Creates a inventory, not persistent """
     app.logger.info('Creating a new inventory')
     payload = request.get_json()
-    inventory = Inventory.from_json(payload)
+    inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
+    inventory.from_json(payload)
+    inventory.save()
     message = inventory.to_json()
     response = make_response(jsonify(message), HTTP_201_CREATED)
     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
@@ -83,9 +85,15 @@ def update_inventory(inventory_id):
     app.logger.info('Updating a inventory')
     inventory = Inventory.find(inventory_id)
     if inventory:
+        print "find inventory ",inventory.to_json()
         payload = request.get_json()
-        inventory = Inventory.from_json(payload)
-        inventory.id = inventory_id
+        
+
+        payload["id"]=inventory_id
+        inventory.from_json(payload)
+
+        print "payload ",payload,type(payload),inventory.to_json()
+
         inventory.save()
         message = inventory.to_json()
         return_code = HTTP_200_OK
