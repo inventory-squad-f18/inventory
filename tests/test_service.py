@@ -91,8 +91,9 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.get('/inventory/101', content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
+
         self.assertEqual(new_json['count'], 900)
-        self.assertEqual(new_json['restock-level'], 10)
+        self.assertEqual(new_json['restock-level'], 90)
         self.assertEqual(new_json['reorder-point'], 9)
 
     def test_update_inventory_not_found(self):
