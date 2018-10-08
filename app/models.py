@@ -46,7 +46,10 @@ class Inventory(object):
                     Inventory.data[i] = self
                     break
 
-
+    def delete(self):
+        """ Removes a Invengory from the data store """
+        Inventory.data.remove(self)
+        
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """

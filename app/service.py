@@ -104,6 +104,19 @@ def update_inventory(inventory_id):
     return jsonify(message), return_code
 
 ######################################################################
+# DELETE A Inventory
+######################################################################
+@app.route('/inventory/<int:inventory_id>', methods=['DELETE'])
+def delete_inventory(inventory_id):
+    """ Removes a Inventory from the database that matches the id """
+    app.logger.info('Deleting a inventory')
+    inventory = Invengory.find(inventory_id)
+    if inventory:
+        inventory.delete()
+    return make_response('', HTTP_204_NO_CONTENT)
+
+
+######################################################################
 #   U T I L I T Y   F U N C T I O N S
 ######################################################################
 def initialize_logging(log_level=logging.INFO):
