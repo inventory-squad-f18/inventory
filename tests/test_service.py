@@ -78,8 +78,11 @@ class TestInventoryService(unittest.TestCase):
     def test_update_inventory(self):
         """ Update an existing Inventory """
         # create a inventory with id 101 first
-        item = Inventory(id= 101, data=(1000, 100, 10, "used"))
-        item.save()
+        # item = Inventory(id = 101, data=(1000, 100, 10, "new"))
+        # item.save()
+        inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(inventory1)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
         # update the inventory with id 101
         new_inventory = {"count": 900, "restock-level": 90, "reorder-point": 9, "condition": "new"}
         data = json.dumps(new_inventory)

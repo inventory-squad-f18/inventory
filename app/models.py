@@ -52,7 +52,7 @@ class Inventory(object):
             return Inventory(json_val['id'], data)
         except KeyError as error:
             raise DataValidationError("Invalid data: missing " + error.args[0])
-    
+
     @classmethod
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
@@ -64,4 +64,7 @@ class Inventory(object):
             return inventory[0]
         return None
 
-
+    @classmethod
+    def all(cls):
+        """ Returns all of the Inventorys in the database """
+        return [inventory for inventory in cls.data]

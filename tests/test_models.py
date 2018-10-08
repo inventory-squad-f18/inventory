@@ -51,6 +51,27 @@ class TestModels(unittest.TestCase):
         except:
             pass
 
+    def test_update_a_inventory(self):
+        """ Update a Inventory """
+        # create a inventory with id 101 first
+        inventory = Inventory(id = 101, data=(1000, 100, 10, "new"))
+        inventory.save()
+        # self.assertEqual(inventory.id, 1)
+        # Change it an save it
+        # inventory.data[0] = 900
+        # inventory.data[1] = 90
+        # inventory.data[2] = 9
+        inventory.data = (900, 90, 9, "new")
+        inventory.save()
+        # self.assertEqual(inventory.id, 1)
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        inventorys = Inventory.all()
+        # self.assertEqual(len(inventorys), 1)
+        self.assertEqual(inventorys[0].data[0], 900)
+        self.assertEqual(inventorys[0].data[1], 90)
+        self.assertEqual(inventorys[0].data[2], 9)
+
     def test_to_json(self):
         """ Test serialization of item to json """
         item = Inventory(id= 101, data=(1000, 100, 10, "new"))
