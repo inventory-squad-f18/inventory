@@ -75,6 +75,18 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(new_json['count'], 1000)
         self.assertEqual(new_json, new_inventory)
 
+    def test_update_pet(self):
+        """ Update an existing Inventory """
+        new_inventory = {"count": 1000, "restock-level": 10, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(new_inventory)
+        resp = self.app.put('/inventory/101', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        resp = self.app.get('/inventory/101', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['restock-level'], 10)
+
+
     def test_initialize_logging(self):
         """ Test the Logging Service """
 

@@ -75,6 +75,27 @@ def create_inventory():
     return response
 
 ######################################################################
+# UPDATE AN EXISTING INVENTORY
+######################################################################
+@app.route('/inventory/<int:inventory_id>', methods=['PUT'])
+def update_inventory(inventory_id):
+    """ Updates a Inventory in the database """
+    app.logger.info('Updating a inventory')
+    inventory = Inventory.find(inventory_id)
+    if inventory:
+        payload = request.get_json()
+        inventory.from_json(payload)
+        inventory.id = inventory_id
+        inventory.save()
+        message = inventory.to_json()
+        return_code = HTTP_200_OK
+    else:
+        message = {'error' : 'Inventory with id: %s was not found' % str(id)}
+        return_code = HTTP_404_NOT_FOUND
+
+    return jsonify(message), return_code
+
+######################################################################
 #   U T I L I T Y   F U N C T I O N S
 ######################################################################
 def initialize_logging(log_level=logging.INFO):
