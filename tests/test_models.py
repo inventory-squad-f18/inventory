@@ -71,6 +71,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(inventorys[0].data[1], 90)
         self.assertEqual(inventorys[0].data[2], 9)
 
+
+    def test_delete_a_inventory(self):
+        """ Delete a Inventory """
+        item = Inventory(id = 0, data=(1000, 100, 10, "new"))
+        item.save()
+        self.assertEqual(len(Inventory.all()), 1)
+        # delete the pet and make sure it isn't in the database
+        item.delete()
+        self.assertEqual(len(Inventory.all()), 0)
+
+
     def test_to_json(self):
         """ Test serialization of item to json """
         item = Inventory(id= 101, data=(1000, 100, 10, "new"))

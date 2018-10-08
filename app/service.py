@@ -39,7 +39,11 @@ def index():
 ######################################################################
 @app.route('/inventory', methods=['GET'])
 def list_inventory():
-    return
+    #return
+    """ Retrieves a list of inventory from the database """
+
+    results = Inventory.all()
+    return jsonify([inventory.to_json() for inventory in results]), HTTP_200_OK
 
 
 ######################################################################
@@ -102,6 +106,19 @@ def update_inventory(inventory_id):
         return_code = HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
+
+######################################################################
+# DELETE A Inventory
+######################################################################
+@app.route('/inventory/<int:inventory_id>', methods=['DELETE'])
+def delete_inventory(inventory_id):
+    """ Removes a Inventory from the database that matches the id """
+    app.logger.info('Deleting a inventory')
+    inventory = Inventory.find(inventory_id)
+    if inventory:
+        inventory.delete()
+    return make_response('', HTTP_204_NO_CONTENT)
+
 
 ######################################################################
 #   U T I L I T Y   F U N C T I O N S
