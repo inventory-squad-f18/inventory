@@ -84,7 +84,7 @@ def update_inventory(inventory_id):
     inventory = Inventory.find(inventory_id)
     if inventory:
         payload = request.get_json()
-        inventory.from_json(payload)
+        inventory = Inventory.from_json(payload)
         inventory.id = inventory_id
         inventory.save()
         message = inventory.to_json()
