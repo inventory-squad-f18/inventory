@@ -103,6 +103,21 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.put('/inventory/0', data=data, content_type='application/json')
         self.assertEquals(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_delete_inventory(self):
+        """ Delete a Inventory that exists """
+        # save the current number of inventory for later comparrison
+        inventory = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(inventory)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+        # update the inventory with id 101
+        inventory_count = self.get_inventory_count()
+        # delete a inventory
+        resp = self.app.delete('/inventory/1', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_inventory_count()
+        self.assertEqual(new_count, inventory_count - 1)
+
 
     def test_initialize_logging(self):
         """ Test the Logging Service """
@@ -124,3 +139,15 @@ class TestInventoryService(unittest.TestCase):
         #test whether our function is removing previous handlers correctly
         service.initialize_logging()
         self.assertTrue(len(self.app.logger.handlers) == 1)
+
+
+######################################################################
+# Utility functions
+######################################################################
+
+    def get_inventory_count(self):
+        # save the current number of inventory
+        resp = self.app.get('/inventory')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        return len(data)
