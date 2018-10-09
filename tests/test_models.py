@@ -103,11 +103,11 @@ class TestModels(unittest.TestCase):
         """ Test deserialization of a item from json """
 
         data = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
-        inventory=Inventory(id=data["id"],data=(0,2,1,"new"))
+        # inventory=Inventory(id=data["id"],data=(0,2,1,"new"))
         # test if not dict
-        item =inventory.from_json(data)
+        inventory = Inventory.from_json(data)
         inventory.save()
-        self.assertEqual(item, None)
+        # self.assertEqual(inventory, None)
         self.assertEqual(inventory.id, 1)
         self.assertEqual(inventory.data[0], 1000)
         self.assertEqual(inventory.data[1], 100)
@@ -117,6 +117,7 @@ class TestModels(unittest.TestCase):
             self.assertRaises(DataValidationError, inventory.from_json("test"))
         except:
             pass
+
         data = {"id": 1, "count": 1000, "restock-point": 100, "reorder-point": 10, "condition": "open-box"}
         try:
             self.assertRaises(DataValidationError, inventory.from_json(data))
