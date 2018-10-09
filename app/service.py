@@ -29,9 +29,7 @@ def index():
 ######################################################################
 @app.route('/inventory', methods=['GET'])
 def list_inventory():
-    #return
     """ Retrieves a list of inventory from the database """
-
     results = Inventory.all()
     return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
 
@@ -62,13 +60,16 @@ def create_inventory():
     """ Creates a inventory, not persistent """
     app.logger.info('Creating a new inventory')
     payload = request.get_json()
-    # inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
+
+    #Inventory.from_json may throw DataValidationError if data is invalid
     try:
         inventory = Inventory.from_json(payload)
     except DataValidationError as error:
         message = {'error': str(error)}
         return jsonify(message), status.HTTP_400_BAD_REQUEST
 
+    #If inventory already exists then, it is a bad request
+    #As update call should be given for existing inventories
     if Inventory.find(inventory.id) is None:
         inventory.save()
         message = inventory.to_json()
@@ -91,9 +92,9 @@ def update_inventory(inventory_id):
     if inventory:
         print "find inventory ",inventory.to_json()
         payload = request.get_json()
-
-
         payload["id"]=inventory_id
+        
+        #Inventory.from_json may throw DataValidationError if data is invalid
         try:
             inventory = Inventory.from_json(payload)
         except DataValidationError as error:
