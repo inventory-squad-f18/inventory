@@ -15,13 +15,13 @@ from models import Inventory
 
 
 
-# Status Codes
-HTTP_200_OK = 200
-HTTP_201_CREATED = 201
-HTTP_204_NO_CONTENT = 204
-HTTP_400_BAD_REQUEST = 400
-HTTP_404_NOT_FOUND = 404
-HTTP_409_CONFLICT = 409
+# # Status Codes
+# HTTP_200_OK = 200
+# HTTP_201_CREATED = 201
+# HTTP_204_NO_CONTENT = 204
+# HTTP_400_BAD_REQUEST = 400
+# HTTP_404_NOT_FOUND = 404
+# HTTP_409_CONFLICT = 409
 
 ######################################################################
 # GET INDEX
@@ -41,7 +41,7 @@ def index():
 def list_inventory():
     """ Retrieves a list of inventory from the database """
     results = Inventory.all()
-    return jsonify([inventory.to_json() for inventory in results]), HTTP_200_OK
+    return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
 
 
 ######################################################################
@@ -55,10 +55,10 @@ def get_inventory(inventory_id):
     inventory = Inventory.find(inventory_id)
     if inventory:
         message = inventory.to_json()
-        return_code = HTTP_200_OK
+        return_code = status.HTTP_200_OK
     else:
         message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
-        return_code = HTTP_404_NOT_FOUND
+        return_code = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
 
@@ -74,7 +74,7 @@ def create_inventory():
     inventory.from_json(payload)
     inventory.save()
     message = inventory.to_json()
-    response = make_response(jsonify(message), HTTP_201_CREATED)
+    response = make_response(jsonify(message), status.HTTP_201_CREATED)
     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
     return response
 
@@ -96,10 +96,10 @@ def update_inventory(inventory_id):
 
         inventory.save()
         message = inventory.to_json()
-        return_code = HTTP_200_OK
+        return_code = status.HTTP_200_OK
     else:
         message = {'error' : 'Inventory with id: %s was not found' % str(id)}
-        return_code = HTTP_404_NOT_FOUND
+        return_code = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
 
@@ -113,7 +113,7 @@ def delete_inventory(inventory_id):
     inventory = Inventory.find(inventory_id)
     if inventory:
         inventory.delete()
-    return make_response('', HTTP_204_NO_CONTENT)
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################
