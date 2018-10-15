@@ -13,6 +13,16 @@ class Inventory(object):
     def __init__(self, id, data):
         if not isinstance(id, int):
             raise DataValidationError("Invalid data: expected int in id, received " + type(id))
+        try:
+            Inventory.validate_data(data)
+        except:
+            raise
+        self.id = id
+        self.data = data
+
+
+    @classmethod
+    def validate_data(cls, data):
         if not isinstance(data, tuple):
             raise DataValidationError("Invalid data: expected tuple in data, received " + type(data))
         if len(data) != 4:
@@ -27,8 +37,7 @@ class Inventory(object):
             raise DataValidationError("Invalid data: expected ordering: data[2] < data[1]")
         if data[3] not in ["new", "open-box", "used"]:
             raise DataValidationError("Invalid data: expected value of data[3] is 'new' or 'open-box' or 'used'")
-        self.id = id
-        self.data = data
+
 
     def save(self):
         """
@@ -49,7 +58,7 @@ class Inventory(object):
     def delete(self):
         """ Removes a Invengory from the data store """
         Inventory.data.remove(self)
-        
+
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
@@ -61,7 +70,11 @@ class Inventory(object):
         if not isinstance(json_val, dict):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
-            self.data = (json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            data = (json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            Inventory.validate_data(data)
+            self.data = data
+        except DataValidationError:
+            raise
         except KeyError as error:
             raise DataValidationError("Invalid data: missing " + error.args[0])
         return

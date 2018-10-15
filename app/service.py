@@ -7,11 +7,11 @@ import sys
 import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
 from flask_api import status
-# from models import Inventory, DataValidationError
+from models import Inventory, DataValidationError
 
 #import flask application
 from . import app
-from models import Inventory
+# from models import Inventory
 
 
 
@@ -52,6 +52,7 @@ def get_inventory(inventory_id):
     """ Retrieves a Inventory with a specific id """
     app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
 
+
     inventory = Inventory.find(inventory_id)
     if inventory:
         message = inventory.to_json()
@@ -69,9 +70,18 @@ def get_inventory(inventory_id):
 def create_inventory():
     """ Creates a inventory, not persistent """
     app.logger.info('Creating a new inventory')
+
     payload = request.get_json()
+
+    inventory = Inventory.find(payload['id'])
+    if inventory is not None:
+        return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
+
     inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
-    inventory.from_json(payload)
+    try:
+        inventory.from_json(payload)
+    except DataValidationError as error:
+        return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
     inventory.save()
     message = inventory.to_json()
     response = make_response(jsonify(message), status.HTTP_201_CREATED)
@@ -90,9 +100,11 @@ def update_inventory(inventory_id):
         print "find inventory ",inventory.to_json()
         payload = request.get_json()
         payload["id"]=inventory_id
-        inventory.from_json(payload)
-
-        print "payload ",payload,type(payload),inventory.to_json()
+        app.logger.info("payload " + str(payload) + str(type(payload)) + str(inventory.to_json()))
+        try:
+            inventory.from_json(payload)
+        except DataValidationError as error:
+            return jsonify({'error': str(error)}), status.HTTP_400_BAD_REQUEST
 
         inventory.save()
         message = inventory.to_json()
