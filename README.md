@@ -28,7 +28,7 @@ Get call to `/inventory` allows to retrieve items from the inventory list. Follo
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
 | /inventory | GET | NA | list of all the inventory items |
-| /inventory/<int::inventory_id> | GET | NA | inventory represented by ID or 404 not found if it does not exists |
+| /inventory/\<int::inventory_id> | GET | NA | inventory represented by ID or 404 not found if it does not exists |
 | /inventory | GET | condition in ('new', 'used', 'open-box') | list of inventory items in condition specified by parameter |
 
 ## Create Inventory Item
