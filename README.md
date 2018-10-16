@@ -1,5 +1,6 @@
 # inventory
 [![Build Status](https://travis-ci.org/inventory-squad-f18/inventory.svg?branch=master)](https://travis-ci.org/inventory-squad-f18/inventory)
+
 The inventory resource keeps track of how many of each product we have in our warehouse
 
 * [Description](#description)
