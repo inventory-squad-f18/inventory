@@ -5,6 +5,8 @@
 The inventory API provides service to keep track of resources in warehouse.
 
 * [Description](#description)
+* [JSON Format](#json-format)
+* [Get Inventories](#get-inventories)
 
 ## Description
 Inventory is a Microservice built using 12 factor standards and accessible via RESTful API calls. Inventory service provides access to inventory of e-commerce website by RESTful API calls to Create, Read, Update, Delete, List and Query inventory.
@@ -19,3 +21,5 @@ The API is RESTful and returns result in JSON format. For futher details about J
 | reorder-point | int | Yes | If count falls below this value then it requires ordering to reach restock-level |
 | restock-level | int | Yes | Point till which to reorder the item |
 | condition | string in ('new', 'used', 'open-box') | Yes | Condition of the item |
+
+## GET Inventories
