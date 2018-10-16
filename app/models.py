@@ -91,6 +91,17 @@ class Inventory(object):
         return None
 
     @classmethod
+    def find_by_condition(cls, condition):
+        """ Finds a inventory by it's ID """
+        print "cls.data ",cls,cls.data
+        if condition not in ["new", "open-box", "used"]:
+            raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
+        if not cls.data:
+            return None
+        inventory = [inventory for inventory in cls.data if inventory.data[3] == condition]
+        return inventory
+
+    @classmethod
     def all(cls):
         """ Returns all of the Inventorys in the database """
         return [inventory for inventory in cls.data]
