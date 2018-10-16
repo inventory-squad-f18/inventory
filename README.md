@@ -34,6 +34,7 @@ Get call to `/inventory` allows to retrieve items from the inventory list. Follo
 
 ## Create Inventory Item
 It allows to create new inventory item.
+
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory | POST | JSON {'id': <int:id>, 'count': <int:count>, 'restock-level': <int:restock-level>, 'reorder-point': <int:reorder-point>, 'condition': <string:condition> | list of all the inventory items |
+| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> | list of all the inventory items |
