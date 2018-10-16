@@ -25,6 +25,7 @@ The API is RESTful and returns result in JSON format. For futher details about J
 
 ## GET Inventories
 Get call to `/inventory` allows to retrieve items from the inventory list. Following table defines the url, parameters and expected results of the call.
+
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
 | /inventory | GET | NA | list of all the inventory items |
