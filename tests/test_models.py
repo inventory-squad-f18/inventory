@@ -99,6 +99,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(json_val['condition'], "new")
 
 
+    #Test
     def test_from_json(self):
         """ Test deserialization of a item from json """
 
