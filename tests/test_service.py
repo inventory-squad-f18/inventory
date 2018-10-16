@@ -75,6 +75,14 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(new_json['count'], 1000)
         self.assertEqual(new_json, new_inventory)
 
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+        new_inventory = {"id": 100, "count": 1000, "restock-level": 100, "reorder-point": 101, "condition": "new"}
+        data = json.dumps(new_inventory)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_update_inventory(self):
         """ Update an existing Inventory """
         # create a inventory with id 101 first
@@ -95,6 +103,11 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(new_json['count'], 900)
         self.assertEqual(new_json['restock-level'], 90)
         self.assertEqual(new_json['reorder-point'], 9)
+
+        new_inventory = {"count": 900, "restock-level": 100, "reorder-point": 101, "condition": "new"}
+        data = json.dumps(new_inventory)
+        resp = self.app.put('/inventory/101', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_inventory_not_found(self):
         """ Update a Inventory that can't be found """

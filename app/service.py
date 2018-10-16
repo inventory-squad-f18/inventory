@@ -7,21 +7,21 @@ import sys
 import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
 from flask_api import status
-# from models import Inventory, DataValidationError
+from models import Inventory, DataValidationError
 
 #import flask application
 from . import app
-from models import Inventory
+# from models import Inventory
 
 
 
-# Status Codes
-HTTP_200_OK = 200
-HTTP_201_CREATED = 201
-HTTP_204_NO_CONTENT = 204
-HTTP_400_BAD_REQUEST = 400
-HTTP_404_NOT_FOUND = 404
-HTTP_409_CONFLICT = 409
+# # Status Codes
+# HTTP_200_OK = 200
+# HTTP_201_CREATED = 201
+# HTTP_204_NO_CONTENT = 204
+# HTTP_400_BAD_REQUEST = 400
+# HTTP_404_NOT_FOUND = 404
+# HTTP_409_CONFLICT = 409
 
 ######################################################################
 # GET INDEX
@@ -39,11 +39,9 @@ def index():
 ######################################################################
 @app.route('/inventory', methods=['GET'])
 def list_inventory():
-    #return
     """ Retrieves a list of inventory from the database """
-
     results = Inventory.all()
-    return jsonify([inventory.to_json() for inventory in results]), HTTP_200_OK
+    return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
 
 
 ######################################################################
@@ -54,13 +52,14 @@ def get_inventory(inventory_id):
     """ Retrieves a Inventory with a specific id """
     app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
 
+
     inventory = Inventory.find(inventory_id)
     if inventory:
         message = inventory.to_json()
-        return_code = HTTP_200_OK
+        return_code = status.HTTP_200_OK
     else:
         message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
-        return_code = HTTP_404_NOT_FOUND
+        return_code = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
 
@@ -71,12 +70,21 @@ def get_inventory(inventory_id):
 def create_inventory():
     """ Creates a inventory, not persistent """
     app.logger.info('Creating a new inventory')
+
     payload = request.get_json()
+
+    inventory = Inventory.find(payload['id'])
+    if inventory is not None:
+        return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
+
     inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
-    inventory.from_json(payload)
+    try:
+        inventory.from_json(payload)
+    except DataValidationError as error:
+        return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
     inventory.save()
     message = inventory.to_json()
-    response = make_response(jsonify(message), HTTP_201_CREATED)
+    response = make_response(jsonify(message), status.HTTP_201_CREATED)
     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
     return response
 
@@ -91,19 +99,19 @@ def update_inventory(inventory_id):
     if inventory:
         print "find inventory ",inventory.to_json()
         payload = request.get_json()
-
-
         payload["id"]=inventory_id
-        inventory.from_json(payload)
-
-        print "payload ",payload,type(payload),inventory.to_json()
+        app.logger.info("payload " + str(payload) + str(type(payload)) + str(inventory.to_json()))
+        try:
+            inventory.from_json(payload)
+        except DataValidationError as error:
+            return jsonify({'error': str(error)}), status.HTTP_400_BAD_REQUEST
 
         inventory.save()
         message = inventory.to_json()
-        return_code = HTTP_200_OK
+        return_code = status.HTTP_200_OK
     else:
         message = {'error' : 'Inventory with id: %s was not found' % str(id)}
-        return_code = HTTP_404_NOT_FOUND
+        return_code = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
 
@@ -117,7 +125,7 @@ def delete_inventory(inventory_id):
     inventory = Inventory.find(inventory_id)
     if inventory:
         inventory.delete()
-    return make_response('', HTTP_204_NO_CONTENT)
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################
