@@ -8,6 +8,9 @@ The inventory API provides service to keep track of resources in warehouse.
 * [JSON Format](#json-format)
 * [Get Inventories](#get-inventories)
 * [Create Inventory Item](#create-inventory-item)
+* [Update Inventory Item](#update-inventory-item)
+* [Delete Inventory Item](#delete-inventory-item)
+* [GET Reorder List](#get-reorder-list)
 
 ## Description
 Inventory is a Microservice built using 12 factor standards and accessible via RESTful API calls. Inventory service provides access to inventory of e-commerce website by RESTful API calls to Create, Read, Update, Delete, List and Query inventory.
@@ -37,4 +40,26 @@ It allows to create new inventory item.
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> | list of all the inventory items |
+| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> } | list of all the inventory items |
+
+## Update Inventory Item
+It allows to update an existing inventory item
+
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /inventory/\<int::inventory_id> | PUT | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> } | Updated inventory item |
+
+## Delete Inventory Item
+It allows to delete an inventory item
+
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /inventory/\<int::inventory_id> | DELETE | NA | Empty response |
+
+
+## GET Reorder List
+It gives list of all items whose count is less than or equal to their re-order point i.e. it gives list of those inventories that require reordering.
+
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /inventory/reorder-list | GET | NA | List of all the items which requires reordering |
