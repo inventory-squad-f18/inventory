@@ -7,6 +7,7 @@ The inventory API provides service to keep track of resources in warehouse.
 * [Description](#description)
 * [JSON Format](#json-format)
 * [Get Inventories](#get-inventories)
+* [Create Inventory Item](#create-inventory-item)
 
 ## Description
 Inventory is a Microservice built using 12 factor standards and accessible via RESTful API calls. Inventory service provides access to inventory of e-commerce website by RESTful API calls to Create, Read, Update, Delete, List and Query inventory.
@@ -23,3 +24,15 @@ The API is RESTful and returns result in JSON format. For futher details about J
 | condition | string in ('new', 'used', 'open-box') | Yes | Condition of the item |
 
 ## GET Inventories
+Get call to `/inventory` allows to retrieve items from the inventory list. Following table defines the url, parameters and expected results of the call.
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /inventory | GET | NA | list of all the inventory items |
+| /inventory/<int::inventory_id> | GET | NA | inventory represented by ID or 404 not found if it does not exists |
+| /inventory | GET | condition in ('new', 'used', 'open-box') | list of inventory items in condition specified by parameter |
+
+## Create Inventory Item
+It allows to create new inventory item.
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /inventory | POST | JSON {'id': <int:id>, 'count': <int:count>, 'restock-level': <int:restock-level>, 'reorder-point': <int:reorder-point>, 'condition': <string:condition> | list of all the inventory items |
