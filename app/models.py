@@ -102,6 +102,14 @@ class Inventory(object):
         return inventory
 
     @classmethod
+    def find_reorder_items(cls):
+        if not cls.data:
+            return None
+
+        inventory = [inventory for inventory in cls.data if inventory.data[0] <= inventory.data[2]]
+        return inventory
+
+    @classmethod
     def all(cls):
         """ Returns all of the Inventorys in the database """
         return [inventory for inventory in cls.data]
