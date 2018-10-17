@@ -40,8 +40,18 @@ def index():
 @app.route('/inventory', methods=['GET'])
 def list_inventory():
     """ Retrieves a list of inventory from the database """
-    results = Inventory.all()
+    results = []
+    condition = request.args.get('condition')
+    if condition:
+        try:
+            results = Inventory.find_by_condition(condition)
+        except DataValidationError as error:
+            return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+    else:
+        results = Inventory.all()
+
     return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
+
 
 
 ######################################################################

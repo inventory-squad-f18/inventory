@@ -154,13 +154,39 @@ class TestInventoryService(unittest.TestCase):
         self.assertTrue(len(self.app.logger.handlers) == 1)
 
 
+    def test_list_inventory(self):
+        """ Test list inventory """
+        self.assertEqual(self.get_inventory_count(), 0)
+
+        # create inventories
+        inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(inventory1)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+
+        inventory2 = {"id": 102, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        data = json.dumps(inventory2)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+
+        # LIST INVENTORIES
+        self.assertEqual(self.get_inventory_count(), 2)
+        self.assertEqual(self.get_inventory_count(condition = 'new'), 1)
+
+
+        resp = self.app.get('/inventory', query_string = {'condition': "NEW"})
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+
 ######################################################################
 # Utility functions
 ######################################################################
 
-    def get_inventory_count(self):
+    def get_inventory_count(self, condition = None):
         # save the current number of inventory
-        resp = self.app.get('/inventory')
+        if condition:
+            resp = self.app.get('/inventory', query_string = {'condition': condition})
+        else:
+            resp = self.app.get('/inventory')
+
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         return len(data)
