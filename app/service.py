@@ -138,6 +138,14 @@ def delete_inventory(inventory_id):
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 
+@app.route('/inventory/reorder-list', methods=['GET'])
+def get_reorder_list():
+    app.logger.info('Getting reorder list')
+
+    results = Inventory.find_reorder_items()
+    return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
+
+
 ######################################################################
 #   U T I L I T Y   F U N C T I O N S
 ######################################################################

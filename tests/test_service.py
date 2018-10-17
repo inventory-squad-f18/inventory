@@ -176,6 +176,22 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+    def test_reorder_list(self):
+        """ Test get reorder list """
+        inventory1 = {"id": 101, "count": 9, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        data = json.dumps(inventory1)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+
+        inventory2 = {"id": 102, "count": 7, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        data = json.dumps(inventory2)
+        resp = self.app.post('/inventory', data=data, content_type='application/json')
+
+        resp = self.app.get('/inventory/reorder-list')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
+
 ######################################################################
 # Utility functions
 ######################################################################
