@@ -4,8 +4,26 @@
 
 
 import unittest
+import os
+import json
+from mock import patch
 from app.models import Inventory, DataValidationError
 from app import app
+
+
+
+VCAP_SERVICES = {
+    'cloudantNoSQLDB': [
+        {'credentials': {
+            'username': 'admin',
+            'password': 'pass',
+            'host': '127.0.0.1',
+            'port': 5984,
+            'url': 'http://admin:pass@127.0.0.1:5984'
+            }
+        }
+    ]
+}
 
 class TestModels(unittest.TestCase):
     """ Models Test """
@@ -122,3 +140,10 @@ class TestModels(unittest.TestCase):
             self.assertRaises(DataValidationError, inventory.from_json(data))
         except:
             pass
+
+
+    # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
+    def test_init_db(self):
+        """ Test if Database is initialized"""
+        Inventory.init_db()
+        self.assertIsNotNone(Inventory.client)
