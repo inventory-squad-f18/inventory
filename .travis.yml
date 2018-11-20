@@ -15,4 +15,4 @@ services:
   - couchdb
 
 before_install:
-  - curl http://admin:pass@127.0.0.1:5984/
+  - couchdb -s
