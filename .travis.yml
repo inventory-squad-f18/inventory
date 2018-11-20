@@ -16,4 +16,7 @@ services:
 
 before_install:
   - docker pull couchdb
+  - curl -X PUT http://127.0.0.1:5984/_users
+  - curl -X PUT http://127.0.0.1:5984/_replicator
+  - curl -X PUT http://127.0.0.1:5984/_global_changes
   - docker run couchdb --restart=always -d --name couchdb -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass
