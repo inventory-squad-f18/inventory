@@ -12,7 +12,8 @@ after_success:
   - codecov
 
 services:
-  - couchdb
+  - docker
 
 before_install:
-  - couchdb -s
+  - docker pull "couchdb"
+  - docker run "couchdb --restart=always -d --name couchdb -p 5984:5984 -v /opt/couchdb/data:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass"
