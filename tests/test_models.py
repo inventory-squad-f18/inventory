@@ -6,6 +6,7 @@
 import unittest
 import os
 import json
+import time
 from mock import patch
 from app.models import Inventory, DataValidationError
 from app import app
@@ -27,6 +28,22 @@ VCAP_SERVICES = {
 
 class TestModels(unittest.TestCase):
     """ Models Test """
+
+
+    def setUp(self):
+        """ Runs before each test """
+        Inventory.init_db()
+        Inventory.remove_all()
+
+    def tearDown(self):
+        # testing auto deployment
+        # The free version of Cloudant will rate limit calls
+        # to 20 lookups/sec, 10 writes/sec, and 5 queries/sec
+        # so we need to pause for a bit to avoid this problem
+        # if we are running in the Bluemix Pipeline
+        if 'VCAP_SERVICES' in os.environ:
+            time.sleep(0.5) # 1/2 second should be enough
+
     def test_create_a_inventory(self):
         """ Create a inventory and assert that it exists """
         item = Inventory(101, 1000, 100, 10, "new")

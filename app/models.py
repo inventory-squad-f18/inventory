@@ -41,10 +41,6 @@ class Inventory(object):
 
     @classmethod
     def validate_data(cls, count, restock_level, reorder_point, condition):
-        # if not isinstance(data, tuple):
-            # raise DataValidationError("Invalid data: expected tuple in data, received " + type(data))
-        # if len(data) != 4:
-        #     raise DataValidationError("Expected 4 fields: count:int, restock-level:int, reorder-point:int, condition:string(new, open-box, used)")
         if count is not None and not isinstance(count, int):
             raise DataValidationError("Invalid data: expected int in count, received " + type(data[0]))
         if restock_level is not None and not isinstance(restock_level, int):
@@ -62,20 +58,20 @@ class Inventory(object):
         Saves a Inventory to the data store
         """
         # if id is duplicate?, if needs update
-        #Inventory.data.append(self)
+        doc = self.to_json()
+        doc['_id'] = str(doc['id'])
+        del doc['id']
+        document = self.database.create_document(doc)
 
-        id_list = [item.id for item in Inventory.data]
-        if self.id not in id_list:
-            Inventory.data.append(self)
-        else:
-            for i in range(len(Inventory.data)):
-                if Inventory.data[i].id == self.id:
-                    Inventory.data[i] = self
-                    break
 
     def delete(self):
         """ Removes a Invengory from the data store """
-        Inventory.data.remove(self)
+        try:
+            document = self.database[str(self.id)]
+        except KeyError:
+            document = None
+        if document:
+            document.delete()
 
 
     def to_json(self):
@@ -89,6 +85,7 @@ class Inventory(object):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
             Inventory.validate_data(json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            # self.id = json_val['id']
             self.count = json_val['count']
             self.restock_level = json_val['restock-level']
             self.reorder_point = json_val['reorder-point']
@@ -102,13 +99,13 @@ class Inventory(object):
     @classmethod
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
-        print "cls.data ",cls,cls.data
-        if not cls.data:
+        # print "cls.data ",cls,cls.data
+        if not cls.database:
             return None
-        inventory = [inventory for inventory in cls.data if inventory.id == inventory_id]
-        if inventory:
-            return inventory[0]
-        return None
+        try:
+            return Inventory(inventory_id).from_json(cls.database[inventory_id])
+        except KeyError as err:
+            return None
 
     @classmethod
     def find_by_condition(cls, condition):
@@ -132,7 +129,21 @@ class Inventory(object):
     @classmethod
     def all(cls):
         """ Returns all of the Inventorys in the database """
-        return [inventory for inventory in cls.data]
+        results = []
+        print cls.database
+
+        for doc in cls.database:
+            print int(doc['_id'])
+            inventory = Inventory(int(doc['_id'])).from_json(doc)
+            # inventory.id = doc['_id']
+            results.append(inventory)
+        return results
+
+    @classmethod
+    def remove_all(cls):
+        """ Removes all documents from the database (use for testing)  """
+        for document in cls.database:
+            document.delete()
 
     @staticmethod
     def init_db(dbname='inventory'):
