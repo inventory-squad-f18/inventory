@@ -58,10 +58,18 @@ class Inventory(object):
         Saves a Inventory to the data store
         """
         # if id is duplicate?, if needs update
+        try:
+            document = self.database[str(self.id)]
+        except KeyError:
+            document = None
         doc = self.to_json()
         doc['_id'] = str(doc['id'])
         del doc['id']
-        document = self.database.create_document(doc)
+        if document:
+            document.update(doc)
+            document.save()
+        else:
+            document = self.database.create_document(doc)
 
 
     def delete(self):
@@ -130,11 +138,13 @@ class Inventory(object):
     def all(cls):
         """ Returns all of the Inventorys in the database """
         results = []
-        print cls.database
 
         for doc in cls.database:
             print int(doc['_id'])
-            inventory = Inventory(int(doc['_id'])).from_json(doc)
+            inventory = Inventory(int(doc['_id']))
+            print inventory
+            inventory.from_json(doc)
+            print inventory
             # inventory.id = doc['_id']
             results.append(inventory)
         return results
