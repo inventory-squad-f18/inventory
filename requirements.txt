@@ -2,7 +2,7 @@
 Flask==1.0.2
 Flask-API==1.0
 Flask-SQLAlchemy==2.3.2
-SQLAlchemy==1.2.12
+cloudant==2.9.0
 
 # Runtime
 gunicorn==19.9.0
