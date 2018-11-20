@@ -37,7 +37,7 @@ class TestInventoryService(unittest.TestCase):
 
     def test_get_inventory(self):
         """ Get one inventory """
-        item = Inventory(id= 101, data=(1000, 100, 10, "used"))
+        item = Inventory(101, 1000, 100, 10, "used")
         item.save()
         resp = self.app.get('/inventory/101')
 
@@ -51,7 +51,7 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.get('/inventory/100')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         # when the specific inventory in
-        item = Inventory(id= 101, data=(1000, 100, 10, "used"))
+        item = Inventory(101, 1000, 100, 10, "used")
         item.save()
         resp = self.app.get('/inventory/100')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)

@@ -21,33 +21,40 @@ class Inventory(object):
 
 
 
-    def __init__(self, id, data):
+    def __init__(self, id, count = None, restock_level = None, reorder_point = None, condition = None):
         if not isinstance(id, int):
             raise DataValidationError("Invalid data: expected int in id, received " + type(id))
         try:
-            Inventory.validate_data(data)
+            Inventory.validate_data(count, restock_level, reorder_point, condition)
         except:
             raise
         self.id = id
-        self.data = data
+        if count is not None:
+            self.count = count
+        if restock_level is not None:
+            self.restock_level = restock_level
+        if reorder_point is not None:
+            self.reorder_point = reorder_point
+        if condition is not None:
+            self.condition = condition
 
 
     @classmethod
-    def validate_data(cls, data):
-        if not isinstance(data, tuple):
-            raise DataValidationError("Invalid data: expected tuple in data, received " + type(data))
-        if len(data) != 4:
-            raise DataValidationError("Expected 4 fields: count:int, restock-level:int, reorder-point:int, condition:string(new, open-box, used)")
-        if not isinstance(data[0], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[0]))
-        if not isinstance(data[1], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[1]))
-        if not isinstance(data[2], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[0]))
-        if data[2] >= data[1]:
-            raise DataValidationError("Invalid data: expected ordering: data[2] < data[1]")
-        if data[3] not in ["new", "open-box", "used"]:
-            raise DataValidationError("Invalid data: expected value of data[3] is 'new' or 'open-box' or 'used'")
+    def validate_data(cls, count, restock_level, reorder_point, condition):
+        # if not isinstance(data, tuple):
+            # raise DataValidationError("Invalid data: expected tuple in data, received " + type(data))
+        # if len(data) != 4:
+        #     raise DataValidationError("Expected 4 fields: count:int, restock-level:int, reorder-point:int, condition:string(new, open-box, used)")
+        if count is not None and not isinstance(count, int):
+            raise DataValidationError("Invalid data: expected int in count, received " + type(data[0]))
+        if restock_level is not None and not isinstance(restock_level, int):
+            raise DataValidationError("Invalid data: expected int in restock_level, received " + type(data[1]))
+        if reorder_point is not None and not isinstance(reorder_point, int):
+            raise DataValidationError("Invalid data: expected int in reorder_point, received " + type(data[0]))
+        if restock_level is not None and reorder_point is not None and reorder_point >= restock_level:
+            raise DataValidationError("Invalid data: expected ordering: restock_level < reorder_point")
+        if condition is not None and condition not in ["new", "open-box", "used"]:
+            raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
 
 
     def save(self):
@@ -73,7 +80,7 @@ class Inventory(object):
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
-        return {"id": self.id, "count": self.data[0], "restock-level": self.data[1], "reorder-point": self.data[2], "condition": self.data[3]}
+        return {"id": self.id, "count": self.count, "restock-level": self.restock_level, "reorder-point": self.reorder_point, "condition": self.condition}
 
 
     def from_json(self,json_val):
@@ -81,9 +88,11 @@ class Inventory(object):
         if not isinstance(json_val, dict):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
-            data = (json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
-            Inventory.validate_data(data)
-            self.data = data
+            Inventory.validate_data(json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            self.count = json_val['count']
+            self.restock_level = json_val['restock-level']
+            self.reorder_point = json_val['reorder-point']
+            self.condition = json_val['condition']
         except DataValidationError:
             raise
         except KeyError as error:
@@ -109,7 +118,7 @@ class Inventory(object):
             raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
         if not cls.data:
             return None
-        inventory = [inventory for inventory in cls.data if inventory.data[3] == condition]
+        inventory = [inventory for inventory in cls.data if inventory.condition == condition]
         return inventory
 
     @classmethod
@@ -117,7 +126,7 @@ class Inventory(object):
         if not cls.data:
             return None
 
-        inventory = [inventory for inventory in cls.data if inventory.data[0] <= inventory.data[2]]
+        inventory = [inventory for inventory in cls.data if inventory.count <= inventory.reorder_point]
         return inventory
 
     @classmethod
