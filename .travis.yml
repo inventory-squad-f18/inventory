@@ -15,5 +15,5 @@ services:
   - docker
 
 before_install:
-  - docker pull "couchdb"
-  - docker run "couchdb --restart=always -d --name couchdb -p 5984:5984 -v /opt/couchdb/data:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass"
+  - docker pull couchdb
+  - docker run couchdb --restart=always -d --name couchdb -p 5984:5984 -v /opt/couchdb/data:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass
