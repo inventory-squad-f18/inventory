@@ -21,33 +21,36 @@ class Inventory(object):
 
 
 
-    def __init__(self, id, data):
+    def __init__(self, id, count = None, restock_level = None, reorder_point = None, condition = None):
         if not isinstance(id, int):
-            raise DataValidationError("Invalid data: expected int in id, received " + type(id))
+            raise DataValidationError("Invalid data: expected int in id, received " + str(type(id)))
         try:
-            Inventory.validate_data(data)
+            Inventory.validate_data(count, restock_level, reorder_point, condition)
         except:
             raise
         self.id = id
-        self.data = data
+        if count is not None:
+            self.count = count
+        if restock_level is not None:
+            self.restock_level = restock_level
+        if reorder_point is not None:
+            self.reorder_point = reorder_point
+        if condition is not None:
+            self.condition = condition
 
 
     @classmethod
-    def validate_data(cls, data):
-        if not isinstance(data, tuple):
-            raise DataValidationError("Invalid data: expected tuple in data, received " + type(data))
-        if len(data) != 4:
-            raise DataValidationError("Expected 4 fields: count:int, restock-level:int, reorder-point:int, condition:string(new, open-box, used)")
-        if not isinstance(data[0], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[0]))
-        if not isinstance(data[1], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[1]))
-        if not isinstance(data[2], int):
-            raise DataValidationError("Invalid data: expected int in data[0], received " + type(data[0]))
-        if data[2] >= data[1]:
-            raise DataValidationError("Invalid data: expected ordering: data[2] < data[1]")
-        if data[3] not in ["new", "open-box", "used"]:
-            raise DataValidationError("Invalid data: expected value of data[3] is 'new' or 'open-box' or 'used'")
+    def validate_data(cls, count, restock_level, reorder_point, condition):
+        if count is not None and not isinstance(count, int):
+            raise DataValidationError("Invalid data: expected int in count, received " + type(data[0]))
+        if restock_level is not None and not isinstance(restock_level, int):
+            raise DataValidationError("Invalid data: expected int in restock_level, received " + type(data[1]))
+        if reorder_point is not None and not isinstance(reorder_point, int):
+            raise DataValidationError("Invalid data: expected int in reorder_point, received " + type(data[0]))
+        if restock_level is not None and reorder_point is not None and reorder_point >= restock_level:
+            raise DataValidationError("Invalid data: expected ordering: restock_level < reorder_point")
+        if condition is not None and condition not in ["new", "open-box", "used"]:
+            raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
 
 
     def save(self):
@@ -55,25 +58,33 @@ class Inventory(object):
         Saves a Inventory to the data store
         """
         # if id is duplicate?, if needs update
-        #Inventory.data.append(self)
-
-        id_list = [item.id for item in Inventory.data]
-        if self.id not in id_list:
-            Inventory.data.append(self)
+        try:
+            document = self.database[str(self.id)]
+        except KeyError:
+            document = None
+        doc = self.to_json()
+        doc['_id'] = str(doc['id'])
+        del doc['id']
+        if document:
+            document.update(doc)
+            document.save()
         else:
-            for i in range(len(Inventory.data)):
-                if Inventory.data[i].id == self.id:
-                    Inventory.data[i] = self
-                    break
+            document = self.database.create_document(doc)
+
 
     def delete(self):
         """ Removes a Invengory from the data store """
-        Inventory.data.remove(self)
+        try:
+            document = self.database[str(self.id)]
+        except KeyError:
+            document = None
+        if document:
+            document.delete()
 
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
-        return {"id": self.id, "count": self.data[0], "restock-level": self.data[1], "reorder-point": self.data[2], "condition": self.data[3]}
+        return {"id": self.id, "count": self.count, "restock-level": self.restock_level, "reorder-point": self.reorder_point, "condition": self.condition}
 
 
     def from_json(self,json_val):
@@ -81,9 +92,12 @@ class Inventory(object):
         if not isinstance(json_val, dict):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
-            data = (json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
-            Inventory.validate_data(data)
-            self.data = data
+            Inventory.validate_data(json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            # self.id = json_val['id']
+            self.count = json_val['count']
+            self.restock_level = json_val['restock-level']
+            self.reorder_point = json_val['reorder-point']
+            self.condition = json_val['condition']
         except DataValidationError:
             raise
         except KeyError as error:
@@ -93,37 +107,64 @@ class Inventory(object):
     @classmethod
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
-        print "cls.data ",cls,cls.data
-        if not cls.data:
+        if not cls.database:
             return None
-        inventory = [inventory for inventory in cls.data if inventory.id == inventory_id]
-        if inventory:
-            return inventory[0]
-        return None
+        try:
+            document = cls.database[str(inventory_id)]
+            inventory = Inventory(int(document['_id']))
+            inventory.from_json(document)
+            return inventory
+        except KeyError as err:
+            return None
 
     @classmethod
     def find_by_condition(cls, condition):
         """ Finds a inventory by it's ID """
-        print "cls.data ",cls,cls.data
         if condition not in ["new", "open-box", "used"]:
             raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
-        if not cls.data:
+        if not cls.database:
             return None
-        inventory = [inventory for inventory in cls.data if inventory.data[3] == condition]
-        return inventory
+
+        results = []
+
+        for doc in cls.database:
+            if doc['condition'] == condition:
+                inventory = Inventory(int(doc['_id']))
+                inventory.from_json(doc)
+                results.append(inventory)
+
+        return results
 
     @classmethod
     def find_reorder_items(cls):
-        if not cls.data:
+        if not cls.database:
             return None
 
-        inventory = [inventory for inventory in cls.data if inventory.data[0] <= inventory.data[2]]
-        return inventory
+        results = []
+        for doc in cls.database:
+            if doc['count'] <= doc['reorder-point']:
+                inventory = Inventory(int(doc['_id']))
+                inventory.from_json(doc)
+                results.append(inventory)
+
+        return results
 
     @classmethod
     def all(cls):
         """ Returns all of the Inventorys in the database """
-        return [inventory for inventory in cls.data]
+        results = []
+
+        for doc in cls.database:
+            inventory = Inventory(int(doc['_id']))
+            inventory.from_json(doc)
+            results.append(inventory)
+        return results
+
+    @classmethod
+    def remove_all(cls):
+        """ Removes all documents from the database (use for testing)  """
+        for document in cls.database:
+            document.delete()
 
     @staticmethod
     def init_db(dbname='inventory'):

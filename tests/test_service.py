@@ -24,9 +24,12 @@ class TestInventoryService(unittest.TestCase):
     def setUp(self):
         """ Runs before each test """
         self.app = service.app.test_client()
+        Inventory.init_db()
+        Inventory.remove_all()
+
     def tearDown(self):
         """ Runs after each test """
-        Inventory.data=[]
+        Inventory.remove_all()
 
     def test_index(self):
         """ Test the Home Page """
@@ -37,7 +40,7 @@ class TestInventoryService(unittest.TestCase):
 
     def test_get_inventory(self):
         """ Get one inventory """
-        item = Inventory(id= 101, data=(1000, 100, 10, "used"))
+        item = Inventory(101, 1000, 100, 10, "used")
         item.save()
         resp = self.app.get('/inventory/101')
 
@@ -51,7 +54,7 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.get('/inventory/100')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         # when the specific inventory in
-        item = Inventory(id= 101, data=(1000, 100, 10, "used"))
+        item = Inventory(101, 1000, 100, 10, "used")
         item.save()
         resp = self.app.get('/inventory/100')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
@@ -189,6 +192,7 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.get('/inventory/reorder-list')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
+        # print data
         self.assertEqual(len(data), 2)
 
 
@@ -198,6 +202,7 @@ class TestInventoryService(unittest.TestCase):
 
     def get_inventory_count(self, condition = None):
         # save the current number of inventory
+        print condition
         if condition:
             resp = self.app.get('/inventory', query_string = {'condition': condition})
         else:

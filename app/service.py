@@ -87,7 +87,7 @@ def create_inventory():
     if inventory is not None:
         return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
 
-    inventory=Inventory(id=payload["id"],data=(0,2,1,"new"))
+    inventory=Inventory(id=payload["id"])
     try:
         inventory.from_json(payload)
     except DataValidationError as error:
