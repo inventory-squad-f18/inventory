@@ -23,7 +23,7 @@ class Inventory(object):
 
     def __init__(self, id, count = None, restock_level = None, reorder_point = None, condition = None):
         if not isinstance(id, int):
-            raise DataValidationError("Invalid data: expected int in id, received " + type(id))
+            raise DataValidationError("Invalid data: expected int in id, received " + str(type(id)))
         try:
             Inventory.validate_data(count, restock_level, reorder_point, condition)
         except:
@@ -107,32 +107,47 @@ class Inventory(object):
     @classmethod
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
-        # print "cls.data ",cls,cls.data
         if not cls.database:
             return None
         try:
-            return Inventory(inventory_id).from_json(cls.database[inventory_id])
+            document = cls.database[str(inventory_id)]
+            inventory = Inventory(int(document['_id']))
+            inventory.from_json(document)
+            return inventory
         except KeyError as err:
             return None
 
     @classmethod
     def find_by_condition(cls, condition):
         """ Finds a inventory by it's ID """
-        print "cls.data ",cls,cls.data
         if condition not in ["new", "open-box", "used"]:
             raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
-        if not cls.data:
+        if not cls.database:
             return None
-        inventory = [inventory for inventory in cls.data if inventory.condition == condition]
-        return inventory
+
+        results = []
+
+        for doc in cls.database:
+            if doc['condition'] == condition:
+                inventory = Inventory(int(doc['_id']))
+                inventory.from_json(doc)
+                results.append(inventory)
+
+        return results
 
     @classmethod
     def find_reorder_items(cls):
-        if not cls.data:
+        if not cls.database:
             return None
 
-        inventory = [inventory for inventory in cls.data if inventory.count <= inventory.reorder_point]
-        return inventory
+        results = []
+        for doc in cls.database:
+            if doc['count'] <= doc['reorder-point']:
+                inventory = Inventory(int(doc['_id']))
+                inventory.from_json(doc)
+                results.append(inventory)
+
+        return results
 
     @classmethod
     def all(cls):
@@ -140,12 +155,8 @@ class Inventory(object):
         results = []
 
         for doc in cls.database:
-            print int(doc['_id'])
             inventory = Inventory(int(doc['_id']))
-            print inventory
             inventory.from_json(doc)
-            print inventory
-            # inventory.id = doc['_id']
             results.append(inventory)
         return results
 
