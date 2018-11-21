@@ -11,9 +11,9 @@ import unittest
 import json
 from flask_api import status    # HTTP Status Codes
 from flask import Flask
-#from app.models import DataValidationError
 import app.service as service
 from app.models import Inventory
+from time import sleep
 
 ######################################################################
 #  T E S T   C A S E S
@@ -24,11 +24,15 @@ class TestInventoryService(unittest.TestCase):
     def setUp(self):
         """ Runs before each test """
         self.app = service.app.test_client()
+        sleep(0.5)
         Inventory.init_db()
+        sleep(0.5)
         Inventory.remove_all()
+        sleep(0.5)
 
     def tearDown(self):
         """ Runs after each test """
+        sleep(0.5)
         Inventory.remove_all()
 
     def test_index(self):
