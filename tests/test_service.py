@@ -24,15 +24,15 @@ class TestInventoryService(unittest.TestCase):
     def setUp(self):
         """ Runs before each test """
         self.app = service.app.test_client()
-        # sleep(0.5)
+        sleep(0.5)
         Inventory.init_db()
-        # sleep(0.5)
+        sleep(0.5)
         Inventory.remove_all()
-        # sleep(0.5)
+        sleep(0.5)
 
     def tearDown(self):
         """ Runs after each test """
-        # sleep(0.5)
+        sleep(0.5)
         Inventory.remove_all()
 
     def test_index(self):
