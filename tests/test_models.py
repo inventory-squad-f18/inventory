@@ -119,6 +119,13 @@ class TestModels(unittest.TestCase):
         item.delete()
         self.assertEqual(len(Inventory.all()), 0)
 
+        item.delete()
+        self.assertEqual(len(Inventory.all()), 0)
+
+        item.id = 1
+        item.delete()
+        self.assertEqual(len(Inventory.all()), 0)
+
 
     def test_to_json(self):
         """ Test serialization of item to json """

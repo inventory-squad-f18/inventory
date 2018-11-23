@@ -78,7 +78,7 @@ class Inventory(object):
             document = self.database[str(self.id)]
         except KeyError:
             document = None
-        if document:
+        if document and document.exists():
             document.delete()
 
 
@@ -111,9 +111,12 @@ class Inventory(object):
             return None
         try:
             document = cls.database[str(inventory_id)]
-            inventory = Inventory(int(document['_id']))
-            inventory.from_json(document)
-            return inventory
+            if document.exists():
+                inventory = Inventory(int(document['_id']))
+                inventory.from_json(document)
+                return inventory
+            else:
+                return None
         except KeyError as err:
             return None
 
@@ -136,18 +139,24 @@ class Inventory(object):
         return results
 
     @classmethod
-    def find_reorder_items(cls):
+    def reorder_items(cls, inventory_id = None):
         if not cls.database:
             return None
 
-        results = []
-        for doc in cls.database:
-            if doc['count'] <= doc['reorder-point']:
-                inventory = Inventory(int(doc['_id']))
-                inventory.from_json(doc)
-                results.append(inventory)
+        if inventory_id:
+            for doc in cls.database:
+                if doc['_id'] == str(inventory_id) and doc['count'] <= doc['restock-level']:
+                    doc['count'] = doc['restock-level']
+                    doc.save()
+        else:
+            for doc in cls.database:
+                if doc['count'] <= doc['restock-level']:
+                    doc['count'] = doc['restock-level']
+                    doc.save()
+                # inventory.from_json(doc)
+                # results.append(inventory)
 
-        return results
+        # return results
 
     @classmethod
     def all(cls):
