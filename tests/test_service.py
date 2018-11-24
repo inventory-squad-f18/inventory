@@ -197,6 +197,7 @@ class TestInventoryService(unittest.TestCase):
         data = json.dumps(inventory2)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
+        sleep(0.5)
         resp = self.app.put('/inventory/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
@@ -206,6 +207,7 @@ class TestInventoryService(unittest.TestCase):
         for item in data:
             self.assertEqual(item['count'], item['restock-level'])
 
+        sleep(0.5)
         Inventory.remove_all()
 
         inventory1 = {"id": 101, "count": 101, "restock-level": 100, "reorder-point": 10, "condition": "new"}
@@ -215,12 +217,14 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.put('/inventory/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
+        sleep(0.5)
         resp = self.app.get('/inventory')
         data = json.loads(resp.data)
 
         for item in data:
             self.assertTrue(item['count'] != item['restock-level'])
 
+        sleep(0.5)
         Inventory.remove_all()
 
         inventory1 = {"id": 101, "count": 60, "restock-level": 100, "reorder-point": 10, "condition": "new"}
@@ -231,6 +235,7 @@ class TestInventoryService(unittest.TestCase):
         data = json.dumps(inventory2)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
+        sleep(0.5)
         resp = self.app.put('/inventory/101/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
