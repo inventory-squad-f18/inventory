@@ -169,7 +169,7 @@ class TestInventoryService(unittest.TestCase):
     def test_list_inventory(self):
         """ Test list inventory """
         self.assertEqual(self.get_inventory_count(), 0)
-
+        self.assertEqual(self.get_inventory_count(condition = 'new'), 0)
         # create inventories
         inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
         data = json.dumps(inventory1)
@@ -190,6 +190,9 @@ class TestInventoryService(unittest.TestCase):
 
     def test_reorder(self):
         """ Test reorder action """
+        resp = self.app.put('/inventory/reorder')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        
         inventory1 = {"id": 101, "count": 9, "restock-level": 100, "reorder-point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')

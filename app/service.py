@@ -9,21 +9,7 @@ from flask import Flask, Response, jsonify, request, json, url_for, make_respons
 from flask_api import status
 from models import Inventory, DataValidationError
 from flask_restplus import Api, Resource, fields, reqparse
-
-#import flask application
 from . import app
-# from models import Inventory
-
-
-
-# Test CI/CD
-# # Status Codes
-# HTTP_200_OK = 200
-# HTTP_201_CREATED = 201
-# HTTP_204_NO_CONTENT = 204
-# HTTP_400_BAD_REQUEST = 400
-# HTTP_404_NOT_FOUND = 404
-# HTTP_409_CONFLICT = 409
 
 ######################################################################
 # Configure Swagger before initilaizing it
@@ -33,11 +19,7 @@ api = Api(app,
           title='Inventory REST API Service',
           description='This is Inventory store server.',
           doc='/'
-          # prefix='/api'
          )
-
-# This namespace is the start of the path i.e., /inventory
-ns = api.namespace('inventory', description='Inventory')
 
 # Define the model so that the docs reflect what can be sent
 inventory_model = api.model('Inventory', {
@@ -53,50 +35,30 @@ inventory_model = api.model('Inventory', {
                               description='The condition of item')
 })
 
-######################################################################
-# GET INDEX
-######################################################################
-@app.route('/')
-def index():
-    """ Return something useful by default """
-    return jsonify(name='Inventory REST API Service',
-                   version='1.0',
-                   url=url_for('list_inventory', _external=True)), status.HTTP_200_OK
-
 inventory_args = reqparse.RequestParser()
 inventory_args.add_argument('condition', type=str, required=False, help='List inventory by condition')
 
 ######################################################################
-# LIST ALL INVENTORY
+#  PATH: /inventory
 ######################################################################
-# @app.route('/inventory', methods=['GET'])
-# def list_inventory():
-#     """ Retrieves a list of inventory from the database """
-#     results = []
-#     condition = request.args.get('condition')
-#     if condition:
-#         try:
-#             results = Inventory.find_by_condition(condition)
-#         except DataValidationError as error:
-#             return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
-#     else:
-#         results = Inventory.all()
-
-#     return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
-
-
-
-
 @api.route('/inventory', strict_slashes=False)
 class InventoryCollection(Resource):
-    """ Handles all interactions with collections of Pets """
+    """
+    InventoryCollection class
 
+    Allows the manipulation of inventory item/s
+    GET /inventory - Returns all inventory items present in system
+    POST /inventory -  Inserts new inventory item in system as specified by data passed in body
+    """
+
+    #------------------------------------------------------------------
+    # LIST ALL INVENTORIES
+    #------------------------------------------------------------------
     @api.doc('list_inventory')
-    #@api.param('category', 'List Pets by category')
     @api.expect(inventory_args, validate=True)
     @api.marshal_list_with(inventory_model)
     def get(self):
-        """ Returns all of the Pets """
+        """ Return all the items present in inventory """
         app.logger.info('Request to list inventory...')
         inventories = []
         args = inventory_args.parse_args()
@@ -111,8 +73,6 @@ class InventoryCollection(Resource):
 
         app.logger.info('[%s] Inventories returned', len(inventories))
         results = [inventory.to_json() for inventory in inventories]
-
-        # return jsonify([inventory.to_json() for inventory in inventories]), status.HTTP_200_OK
         return results, status.HTTP_200_OK
 
     #------------------------------------------------------------------
@@ -125,19 +85,8 @@ class InventoryCollection(Resource):
     @api.marshal_with(inventory_model, code=201)
     def post(self):
         """
-        Creates a Inventory
-        This endpoint will create a Inventory based the data in the body that is posted
+        Creates a Inventory based on the data passed in the body
         """
-        # app.logger.info('Request to Create a Inventory')
-        # check_content_type('application/json')
-        # inventory = Inventory()
-        # app.logger.info('Payload = %s', api.payload)
-        # inventory.deserialize(api.payload)
-        # inventory.save()
-        # app.logger.info('Inventory with new id [%s] saved!', inventory.id)
-        # location_url = api.url_for(InventoryResource, inventory_id=pet.id, _external=True)
-        # return inventory.to_json(), status.HTTP_201_CREATED, {'Location': location_url}
-        """ Creates a inventory, not persistent """
         app.logger.info('Creating a new inventory')
 
         payload = request.get_json()
@@ -152,10 +101,6 @@ class InventoryCollection(Resource):
         except DataValidationError as error:
             return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
         inventory.save()
-        # message = inventory.to_json()
-        # response = make_response(jsonify(message), status.HTTP_201_CREATED)
-        # response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
-        # print response,"hhh "
         return inventory.to_json(), status.HTTP_201_CREATED, {'Location': url_for('get_inventory', inventory_id=inventory.id, _external=True)}
 
 
@@ -182,68 +127,18 @@ def get_inventory(inventory_id):
 
 
 ######################################################################
-# ADD A NEW Inventory
-######################################################################
-# @app.route('/inventory', methods=['POST'])
-# def create_inventory():
-#     """ Creates a inventory, not persistent """
-#     app.logger.info('Creating a new inventory')
-#
-#     payload = request.get_json()
-#
-#     inventory = Inventory.find(payload['id'])
-#     if inventory is not None:
-#         return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
-#
-#     inventory=Inventory(id=payload["id"])
-#     try:
-#         inventory.from_json(payload)
-#     except DataValidationError as error:
-#         return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
-#     inventory.save()
-#     message = inventory.to_json()
-#     response = make_response(jsonify(message), status.HTTP_201_CREATED)
-#     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
-#     return response
-
-######################################################################
-# UPDATE AN EXISTING INVENTORY
-######################################################################
-# @app.route('/inventory/<int:inventory_id>', methods=['PUT'])
-# def update_inventory(inventory_id):
-#     """ Updates a Inventory in the database """
-#     app.logger.info('Updating a inventory')
-#     inventory = Inventory.find(inventory_id)
-#     if inventory:
-#         print "find inventory ",inventory.to_json()
-#         payload = request.get_json()
-#         payload["id"]=inventory_id
-#         app.logger.info("payload " + str(payload) + str(type(payload)) + str(inventory.to_json()))
-#         try:
-#             inventory.from_json(payload)
-#         except DataValidationError as error:
-#             return jsonify({'error': str(error)}), status.HTTP_400_BAD_REQUEST
-#
-#         inventory.save()
-#         message = inventory.to_json()
-#         return_code = status.HTTP_200_OK
-#     else:
-#         message = {'error' : 'Inventory with id: %s was not found' % str(id)}
-#         return_code = status.HTTP_404_NOT_FOUND
-#
-#     return jsonify(message), return_code
-
-######################################################################
-#  PATH: /pets/{id}
+#  PATH: /inventory/{id}
 ######################################################################
 @api.route('/inventory/<int:inventory_id>')
 @api.param('inventory_id', 'The Inventory identifier')
 class InventoryResource(Resource):
     """
-    PetResource class
+    InventoryResource class
 
-    Allows the manipulation of a single Pet
-    DELETE /pet{id} -  Deletes a Pet with the id
+    Allows the manipulation of a single inventory item
+    DELETE /inventory/{id} -  Deletes a inventory item pecified by id if it exists
+    PUT /inventory/{id} - Updates an inventory item specified by id as per data passed in body
+    GET /inventory/{id} - Returns an inventory item specified by id if it exists
     """
     #------------------------------------------------------------------
     # DELETE A PET
@@ -252,9 +147,7 @@ class InventoryResource(Resource):
     @api.response(204, 'Inventory deleted')
     def delete(self, inventory_id):
         """
-        Delete a Pet
-
-        This endpoint will delete a Pet based the id specified in the path
+        Delete a inventory item specified by id if it exists
         """
         app.logger.info('Request to Delete a inventory with id [%s]', inventory_id)
         inventory = Inventory.find(inventory_id)
@@ -273,9 +166,7 @@ class InventoryResource(Resource):
     @api.marshal_with(inventory_model)
     def put(self, inventory_id):
         """
-        Update a Inventory
-
-        This endpoint will update a Inventory based the body that is posted
+        Update a Inventory specified by id as per data passed in body
         """
         app.logger.info('Updating a inventory')
         inventory = Inventory.find(inventory_id)
@@ -299,34 +190,47 @@ class InventoryResource(Resource):
         return jsonify(message), return_code
 
 
+######################################################################
+#  PATH: /inventory/reorder
+######################################################################
+@api.route('/inventory/reorder')
+class ReorderAllAction(Resource):
+    """
+    ReorderAllAction class
+
+    Allows reordering multiple inventory items
+    PUT /inventory/reorder - Reorders all inventory items whose count is less than restock level
+    """
+    @api.doc('reorder_items')
+    @api.marshal_list_with(inventory_model)
+    def put(self):
+        "Reorder all the items whose count is less than restock level"
+        app.logger.info('Reordering Items')
+
+        Inventory.reorder_items()
+        return jsonify({}),status.HTTP_200_OK
+
 
 ######################################################################
-# DELETE A Inventory
+#  PATH: /inventory/{id}/reorder
 ######################################################################
-# @app.route('/inventory/<int:inventory_id>', methods=['DELETE'])
-# def delete_inventory(inventory_id):
-#     """ Removes a Inventory from the database that matches the id """
-#     app.logger.info('Deleting a inventory')
-#     inventory = Inventory.find(inventory_id)
-#     if inventory:
-#         inventory.delete()
-#     return make_response('', status.HTTP_204_NO_CONTENT)
+@api.route('/inventory/<int:inventory_id>/reorder')
+@api.param('inventory_id', 'The Inventory identifier')
+class ReorderOneAction(Resource):
+    """
+    ReorderOneAction class
 
+    Allows reordering single inventory item
+    PUT /inventory/{id}/reorder - Reorders inventory item specified by id if its count is less than restock level
+    """
+    @api.doc('reorder_items')
+    @api.marshal_list_with(inventory_model)
+    def put(self, inventory_id):
+        "Reorders item specified by id if it's count is less than restock level"
+        app.logger.info('Reordering Item :: ' + str(inventory_id))
 
-@app.route('/inventory/reorder', methods=['PUT'])
-def reorder():
-    app.logger.info('Reordering Items')
-
-    Inventory.reorder_items()
-    return jsonify({}),status.HTTP_200_OK
-
-
-@app.route('/inventory/<int:inventory_id>/reorder', methods=['PUT'])
-def reorder_item(inventory_id):
-    app.logger.info('Reordering Item :: ' + str(inventory_id))
-
-    Inventory.reorder_items(inventory_id)
-    return jsonify({}),status.HTTP_200_OK
+        Inventory.reorder_items(inventory_id)
+        return jsonify({}),status.HTTP_200_OK
 
 
 ######################################################################
@@ -351,11 +255,3 @@ def initialize_logging(log_level=logging.INFO):
         app.logger.addHandler(handler)
         app.logger.setLevel(log_level)
         app.logger.info('Logging handler established')
-
-def check_content_type(content_type):
-    """ Checks that the media type is correct """
-    if request.headers['Content-Type'] == content_type:
-        return
-    app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
-    api.abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-              'Content-Type must be {}'.format(content_type))
