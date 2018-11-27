@@ -8,6 +8,7 @@ import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
 from flask_api import status
 from models import Inventory, DataValidationError
+from flask_restplus import Api, Resource, fields
 
 #import flask application
 from . import app
@@ -22,6 +23,34 @@ from . import app
 # HTTP_400_BAD_REQUEST = 400
 # HTTP_404_NOT_FOUND = 404
 # HTTP_409_CONFLICT = 409
+
+######################################################################
+# Configure Swagger before initilaizing it
+######################################################################
+api = Api(app,
+          version='1.0.0',
+          title='Inventory REST API Service',
+          description='This is Inventory store server.',
+          doc='/'
+          # prefix='/api'
+         )
+
+# This namespace is the start of the path i.e., /inventory
+ns = api.namespace('inventory', description='Inventory')
+
+# Define the model so that the docs reflect what can be sent
+inventory_model = api.model('Inventory', {
+    'id': fields.Integer(required=True,
+                         description='The unique id assigned to item'),
+    'count': fields.Integer(required=True,
+                          description='The count of item'),
+    'restock-level': fields.Integer(required=True,
+                              description='The restock level'),
+    'reorder-point': fields.Integer(required=True,
+                                description='Reorder point'),
+    'condition': fields.String(required=True,
+                              description='The condition of item')
+})
 
 ######################################################################
 # GET INDEX
