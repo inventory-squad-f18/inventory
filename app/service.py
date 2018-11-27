@@ -234,16 +234,46 @@ def update_inventory(inventory_id):
     return jsonify(message), return_code
 
 ######################################################################
+#  PATH: /pets/{id}
+######################################################################
+@api.route('/inventory/<int:inventory_id>')
+@api.param('inventory_id', 'The Inventory identifier')
+class InventoryResource(Resource):
+    """
+    PetResource class
+
+    Allows the manipulation of a single Pet
+    DELETE /pet{id} -  Deletes a Pet with the id
+    """
+    #------------------------------------------------------------------
+    # DELETE A PET
+    #------------------------------------------------------------------
+    @api.doc('delete_inventory')
+    @api.response(204, 'Inventory deleted')
+    def delete(self, inventory_id):
+        """
+        Delete a Pet
+
+        This endpoint will delete a Pet based the id specified in the path
+        """
+        app.logger.info('Request to Delete a inventory with id [%s]', inventory_id)
+        inventory = Inventory.find(inventory_id)
+        if inventory:
+            inventory.delete()
+        return '', status.HTTP_204_NO_CONTENT
+
+
+######################################################################
 # DELETE A Inventory
 ######################################################################
-@app.route('/inventory/<int:inventory_id>', methods=['DELETE'])
-def delete_inventory(inventory_id):
-    """ Removes a Inventory from the database that matches the id """
-    app.logger.info('Deleting a inventory')
-    inventory = Inventory.find(inventory_id)
-    if inventory:
-        inventory.delete()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+# @app.route('/inventory/<int:inventory_id>', methods=['DELETE'])
+# def delete_inventory(inventory_id):
+#     """ Removes a Inventory from the database that matches the id """
+#     app.logger.info('Deleting a inventory')
+#     inventory = Inventory.find(inventory_id)
+#     if inventory:
+#         inventory.delete()
+#     return make_response('', status.HTTP_204_NO_CONTENT)
 
 
 @app.route('/inventory/reorder', methods=['PUT'])
