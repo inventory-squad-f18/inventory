@@ -15,6 +15,16 @@ from . import app
 # from models import Inventory
 
 
+
+# Test CI/CD
+# # Status Codes
+# HTTP_200_OK = 200
+# HTTP_201_CREATED = 201
+# HTTP_204_NO_CONTENT = 204
+# HTTP_400_BAD_REQUEST = 400
+# HTTP_404_NOT_FOUND = 404
+# HTTP_409_CONFLICT = 409
+
 ######################################################################
 # Configure Swagger before initilaizing it
 ######################################################################
@@ -27,7 +37,7 @@ api = Api(app,
          )
 
 # This namespace is the start of the path i.e., /inventory
-# ns = api.namespace('inventory', description='Inventory')
+ns = api.namespace('inventory', description='Inventory')
 
 # Define the model so that the docs reflect what can be sent
 inventory_model = api.model('Inventory', {
@@ -42,15 +52,6 @@ inventory_model = api.model('Inventory', {
     'condition': fields.String(required=True,
                               description='The condition of item')
 })
-
-# Test CI/CD
-# # Status Codes
-# HTTP_200_OK = 200
-# HTTP_201_CREATED = 201
-# HTTP_204_NO_CONTENT = 204
-# HTTP_400_BAD_REQUEST = 400
-# HTTP_404_NOT_FOUND = 404
-# HTTP_409_CONFLICT = 409
 
 ######################################################################
 # GET INDEX
