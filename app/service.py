@@ -8,11 +8,40 @@ import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
 from flask_api import status
 from models import Inventory, DataValidationError
+from flask_restplus import Api, Resource, fields, reqparse
 
 #import flask application
 from . import app
 # from models import Inventory
 
+
+######################################################################
+# Configure Swagger before initilaizing it
+######################################################################
+api = Api(app,
+          version='1.0.0',
+          title='Inventory REST API Service',
+          description='This is Inventory store server.',
+          doc='/'
+          # prefix='/api'
+         )
+
+# This namespace is the start of the path i.e., /inventory
+# ns = api.namespace('inventory', description='Inventory')
+
+# Define the model so that the docs reflect what can be sent
+inventory_model = api.model('Inventory', {
+    'id': fields.Integer(required=True,
+                         description='The unique id assigned to item'),
+    'count': fields.Integer(required=True,
+                          description='The count of item'),
+    'restock-level': fields.Integer(required=True,
+                              description='The restock level'),
+    'reorder-point': fields.Integer(required=True,
+                                description='Reorder point'),
+    'condition': fields.String(required=True,
+                              description='The condition of item')
+})
 
 # Test CI/CD
 # # Status Codes
@@ -33,25 +62,55 @@ def index():
                    version='1.0',
                    url=url_for('list_inventory', _external=True)), status.HTTP_200_OK
 
+inventory_args = reqparse.RequestParser()
+inventory_args.add_argument('condition', type=str, required=False, help='List inventory by condition')
 
 ######################################################################
 # LIST ALL INVENTORY
 ######################################################################
-@app.route('/inventory', methods=['GET'])
-def list_inventory():
-    """ Retrieves a list of inventory from the database """
-    results = []
-    condition = request.args.get('condition')
-    if condition:
-        try:
-            results = Inventory.find_by_condition(condition)
-        except DataValidationError as error:
-            return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
-    else:
-        results = Inventory.all()
+# @app.route('/inventory', methods=['GET'])
+# def list_inventory():
+#     """ Retrieves a list of inventory from the database """
+#     results = []
+#     condition = request.args.get('condition')
+#     if condition:
+#         try:
+#             results = Inventory.find_by_condition(condition)
+#         except DataValidationError as error:
+#             return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+#     else:
+#         results = Inventory.all()
 
-    return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
+#     return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
 
+
+@api.route('/inventory', strict_slashes=False)
+class InventoryCollection(Resource):
+    """ Handles all interactions with collections of Pets """
+
+    @api.doc('list_inventory')
+    #@api.param('category', 'List Pets by category')
+    @api.expect(inventory_args, validate=True)
+    @api.marshal_list_with(inventory_model)
+    def get(self):
+        """ Returns all of the Pets """
+        app.logger.info('Request to list inventory...')
+        inventories = []
+        args = inventory_args.parse_args()
+        condition = args['condition']
+        if condition:
+            try:
+              inventories = Inventory.find_by_condition(condition)
+            except DataValidationError as error:
+                return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+        else:
+            inventories = Inventory.all()
+
+        app.logger.info('[%s] Inventories returned', len(inventories))
+        results = [inventory.to_json() for inventory in inventories]
+
+        # return jsonify([inventory.to_json() for inventory in inventories]), status.HTTP_200_OK
+        return results, status.HTTP_200_OK
 
 
 ######################################################################
@@ -72,6 +131,7 @@ def get_inventory(inventory_id):
         return_code = status.HTTP_404_NOT_FOUND
 
     return jsonify(message), return_code
+
 
 ######################################################################
 # ADD A NEW Inventory
