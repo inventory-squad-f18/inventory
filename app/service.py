@@ -85,6 +85,8 @@ inventory_args.add_argument('condition', type=str, required=False, help='List in
 #     return jsonify([inventory.to_json() for inventory in results]), status.HTTP_200_OK
 
 
+
+
 @api.route('/inventory', strict_slashes=False)
 class InventoryCollection(Resource):
     """ Handles all interactions with collections of Pets """
@@ -113,6 +115,51 @@ class InventoryCollection(Resource):
         # return jsonify([inventory.to_json() for inventory in inventories]), status.HTTP_200_OK
         return results, status.HTTP_200_OK
 
+    #------------------------------------------------------------------
+    # ADD A NEW INVENTORY
+    #------------------------------------------------------------------
+    @api.doc('create_inventory')
+    @api.expect(inventory_model)
+    @api.response(400, 'The posted data was not valid')
+    @api.response(201, 'Inventory created successfully')
+    @api.marshal_with(inventory_model, code=201)
+    def post(self):
+        """
+        Creates a Inventory
+        This endpoint will create a Inventory based the data in the body that is posted
+        """
+        # app.logger.info('Request to Create a Inventory')
+        # check_content_type('application/json')
+        # inventory = Inventory()
+        # app.logger.info('Payload = %s', api.payload)
+        # inventory.deserialize(api.payload)
+        # inventory.save()
+        # app.logger.info('Inventory with new id [%s] saved!', inventory.id)
+        # location_url = api.url_for(InventoryResource, inventory_id=pet.id, _external=True)
+        # return inventory.to_json(), status.HTTP_201_CREATED, {'Location': location_url}
+        """ Creates a inventory, not persistent """
+        app.logger.info('Creating a new inventory')
+
+        payload = request.get_json()
+
+        inventory = Inventory.find(payload['id'])
+        if inventory is not None:
+            return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
+
+        inventory=Inventory(id=payload["id"])
+        try:
+            inventory.from_json(payload)
+        except DataValidationError as error:
+            return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+        inventory.save()
+        # message = inventory.to_json()
+        # response = make_response(jsonify(message), status.HTTP_201_CREATED)
+        # response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
+        # print response,"hhh "
+        return inventory.to_json(), status.HTTP_201_CREATED, {'Location': url_for('get_inventory', inventory_id=inventory.id, _external=True)}
+
+
+
 
 ######################################################################
 # RETRIEVE A Inventory
@@ -137,27 +184,27 @@ def get_inventory(inventory_id):
 ######################################################################
 # ADD A NEW Inventory
 ######################################################################
-@app.route('/inventory', methods=['POST'])
-def create_inventory():
-    """ Creates a inventory, not persistent """
-    app.logger.info('Creating a new inventory')
-
-    payload = request.get_json()
-
-    inventory = Inventory.find(payload['id'])
-    if inventory is not None:
-        return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
-
-    inventory=Inventory(id=payload["id"])
-    try:
-        inventory.from_json(payload)
-    except DataValidationError as error:
-        return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
-    inventory.save()
-    message = inventory.to_json()
-    response = make_response(jsonify(message), status.HTTP_201_CREATED)
-    response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
-    return response
+# @app.route('/inventory', methods=['POST'])
+# def create_inventory():
+#     """ Creates a inventory, not persistent """
+#     app.logger.info('Creating a new inventory')
+#
+#     payload = request.get_json()
+#
+#     inventory = Inventory.find(payload['id'])
+#     if inventory is not None:
+#         return jsonify({'error' : 'Inventory with id: %s already exists' % str(payload['id'])}), status.HTTP_400_BAD_REQUEST
+#
+#     inventory=Inventory(id=payload["id"])
+#     try:
+#         inventory.from_json(payload)
+#     except DataValidationError as error:
+#         return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+#     inventory.save()
+#     message = inventory.to_json()
+#     response = make_response(jsonify(message), status.HTTP_201_CREATED)
+#     response.headers['Location'] = url_for('get_inventory', inventory_id=inventory.id, _external=True)
+#     return response
 
 ######################################################################
 # UPDATE AN EXISTING INVENTORY
@@ -237,3 +284,11 @@ def initialize_logging(log_level=logging.INFO):
         app.logger.addHandler(handler)
         app.logger.setLevel(log_level)
         app.logger.info('Logging handler established')
+
+def check_content_type(content_type):
+    """ Checks that the media type is correct """
+    if request.headers['Content-Type'] == content_type:
+        return
+    app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
+    api.abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+              'Content-Type must be {}'.format(content_type))
