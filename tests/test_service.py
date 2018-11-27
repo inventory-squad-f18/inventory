@@ -36,12 +36,12 @@ class TestInventoryService(unittest.TestCase):
         sleep(0.5)
         Inventory.remove_all()
 
-    def test_index(self):
-        """ Test the Home Page """
-        resp = self.app.get('/')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        #data = json.loads(resp.data)
-        #self.assertEqual(data['name'], 'Inventory REST API Service')
+    # def test_index(self):
+    #     """ Test the Home Page """
+    #     resp = self.app.get('/')
+    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    #     data = json.loads(resp.data)
+    #     self.assertEqual(data['name'], 'Inventory REST API Service')
 
     def test_get_inventory(self):
         """ Get one inventory """
