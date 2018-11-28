@@ -101,29 +101,12 @@ class InventoryCollection(Resource):
         except DataValidationError as error:
             return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
         inventory.save()
-        return inventory.to_json(), status.HTTP_201_CREATED, {'Location': url_for('get_inventory', inventory_id=inventory.id, _external=True)}
+        return inventory.to_json(), status.HTTP_201_CREATED, {'Location': api.url_for(InventoryResource, inventory_id=inventory.id, _external=True)}
 
 
 
 
-######################################################################
-# RETRIEVE A Inventory
-######################################################################
-@app.route('/inventory/<int:inventory_id>', methods=['GET'])
-def get_inventory(inventory_id):
-    """ Retrieves a Inventory with a specific id """
-    app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
 
-
-    inventory = Inventory.find(inventory_id)
-    if inventory:
-        message = inventory.to_json()
-        return_code = status.HTTP_200_OK
-    else:
-        message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
-        return_code = status.HTTP_404_NOT_FOUND
-
-    return jsonify(message), return_code
 
 
 ######################################################################
@@ -140,8 +123,29 @@ class InventoryResource(Resource):
     PUT /inventory/{id} - Updates an inventory item specified by id as per data passed in body
     GET /inventory/{id} - Returns an inventory item specified by id if it exists
     """
+    ######################################################################
+    # RETRIEVE A Inventory
+    ######################################################################
+    @api.doc('get_inventory')
+    @api.response(404, 'Inventory not found')
+    @api.marshal_with(inventory_model)
+    def get(self,inventory_id):
+        """ Retrieves a Inventory with a specific id """
+        app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
+
+
+        inventory = Inventory.find(inventory_id)
+        if inventory:
+            message = inventory.to_json()
+            return_code = status.HTTP_200_OK
+        else:
+            message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
+            return_code = status.HTTP_404_NOT_FOUND
+
+        return message, return_code
+
     #------------------------------------------------------------------
-    # DELETE A PET
+    # DELETE A INVENTORY
     #------------------------------------------------------------------
     @api.doc('delete_inventory')
     @api.response(204, 'Inventory deleted')
@@ -157,7 +161,7 @@ class InventoryResource(Resource):
 
 
     #------------------------------------------------------------------
-    # UPDATE AN EXISTING PET
+    # UPDATE AN EXISTING INVENTORY
     #------------------------------------------------------------------
     @api.doc('update_inventory')
     @api.response(404, 'Inventory not found')
@@ -187,7 +191,7 @@ class InventoryResource(Resource):
             message = {'error' : 'Inventory with id: %s was not found' % str(id)}
             return_code = status.HTTP_404_NOT_FOUND
 
-        return jsonify(message), return_code
+        return message, return_code
 
 
 ######################################################################
