@@ -126,7 +126,7 @@ class Inventory(object):
         if condition not in ["new", "open-box", "used"]:
             raise DataValidationError("Invalid data: expected value of condition is 'new' or 'open-box' or 'used'")
         if not cls.database:
-            return None
+            return []
 
         results = []
 
@@ -141,7 +141,7 @@ class Inventory(object):
     @classmethod
     def reorder_items(cls, inventory_id = None):
         if not cls.database:
-            return None
+            return
 
         if inventory_id:
             for doc in cls.database:
@@ -153,10 +153,6 @@ class Inventory(object):
                 if doc['count'] <= doc['restock-level']:
                     doc['count'] = doc['restock-level']
                     doc.save()
-                # inventory.from_json(doc)
-                # results.append(inventory)
-
-        # return results
 
     @classmethod
     def all(cls):
