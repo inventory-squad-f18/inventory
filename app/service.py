@@ -101,7 +101,7 @@ class InventoryCollection(Resource):
         except DataValidationError as error:
             return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
         inventory.save()
-        return inventory.to_json(), status.HTTP_201_CREATED, {'Location': url_for('get_inventory', inventory_id=inventory.id, _external=True)}
+        return inventory.to_json(), status.HTTP_201_CREATED, {'Location': api.url_for(InventoryResource, inventory_id=inventory.id, _external=True)}
 
 
 ######################################################################
@@ -166,14 +166,13 @@ class InventoryResource(Resource):
             message = {'error' : 'Inventory with id: %s was not found' % str(id)}
             return_code = status.HTTP_404_NOT_FOUND
 
-        return jsonify(message), return_code
+        return message, return_code
 
 
     @api.doc('get_inventory')
     @api.response(404, 'Inventory not found')
-    @api.response(200, 'Inventory returned')
     @api.marshal_with(inventory_model)
-    def get_inventory(inventory_id):
+    def get(self, inventory_id):
         """ Retrieves a Inventory with a specific id """
         app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
 
@@ -186,7 +185,8 @@ class InventoryResource(Resource):
             message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
             return_code = status.HTTP_404_NOT_FOUND
 
-        return jsonify(message), return_code
+        app.logger.info(message)
+        return message, return_code
 
 
 ######################################################################

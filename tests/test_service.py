@@ -36,13 +36,6 @@ class TestInventoryService(unittest.TestCase):
         sleep(0.5)
         Inventory.remove_all()
 
-    # def test_index(self):
-    #     """ Test the Home Page """
-    #     resp = self.app.get('/')
-    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    #     data = json.loads(resp.data)
-    #     self.assertEqual(data['name'], 'Inventory REST API Service')
-
     def test_get_inventory(self):
         """ Get one inventory """
         item = Inventory(101, 1000, 100, 10, "used")
@@ -51,6 +44,7 @@ class TestInventoryService(unittest.TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
+        print data
         self.assertEqual(data['condition'], "used")
 
     def test_get_inventory_not_found(self):
@@ -192,7 +186,7 @@ class TestInventoryService(unittest.TestCase):
         """ Test reorder action """
         resp = self.app.put('/inventory/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        
+
         inventory1 = {"id": 101, "count": 9, "restock-level": 100, "reorder-point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
