@@ -119,7 +119,7 @@ class InventoryResource(Resource):
     GET /inventory/{id} - Returns an inventory item specified by id if it exists
     """
     #------------------------------------------------------------------
-    # DELETE A PET
+    # DELETE A INVENTORY
     #------------------------------------------------------------------
     @api.doc('delete_inventory')
     @api.response(204, 'Inventory deleted')
@@ -135,7 +135,7 @@ class InventoryResource(Resource):
 
 
     #------------------------------------------------------------------
-    # UPDATE AN EXISTING PET
+    # UPDATE AN EXISTING INVENTORY
     #------------------------------------------------------------------
     @api.doc('update_inventory')
     @api.response(404, 'Inventory not found')

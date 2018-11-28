@@ -115,7 +115,7 @@ class TestModels(unittest.TestCase):
         item = Inventory(0, 1000, 100, 10, "new")
         item.save()
         self.assertEqual(len(Inventory.all()), 1)
-        # delete the pet and make sure it isn't in the database
+        # delete the inventory and make sure it isn't in the database
         item.delete()
         self.assertEqual(len(Inventory.all()), 0)
 
@@ -149,7 +149,6 @@ class TestModels(unittest.TestCase):
 
         data = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
         inventory=Inventory(id=data["id"])
-        # test if not dict
         item =inventory.from_json(data)
         inventory.save()
         self.assertEqual(item, None)

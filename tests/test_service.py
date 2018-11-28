@@ -61,8 +61,6 @@ class TestInventoryService(unittest.TestCase):
 
     def test_create_inventory(self):
         """ Create a Inventory """
-        # add a new pet
-        # new_inventory = {"id": 101, "data":(1000, 100, 10, "new") }
         new_inventory = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
 
         data = json.dumps(new_inventory)
