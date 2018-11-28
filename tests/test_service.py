@@ -67,7 +67,7 @@ class TestInventoryService(unittest.TestCase):
 
     def test_create_inventory(self):
         """ Create a Inventory """
-        # add a new pet
+        # add a new inventory
         # new_inventory = {"id": 101, "data":(1000, 100, 10, "new") }
         new_inventory = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
 
@@ -192,7 +192,7 @@ class TestInventoryService(unittest.TestCase):
         """ Test reorder action """
         resp = self.app.put('/inventory/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        
+
         inventory1 = {"id": 101, "count": 9, "restock-level": 100, "reorder-point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
