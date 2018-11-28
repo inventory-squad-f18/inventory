@@ -149,7 +149,6 @@ class TestModels(unittest.TestCase):
 
         data = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
         inventory=Inventory(id=data["id"])
-        # test if not dict
         item =inventory.from_json(data)
         inventory.save()
         self.assertEqual(item, None)

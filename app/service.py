@@ -104,11 +104,6 @@ class InventoryCollection(Resource):
         return inventory.to_json(), status.HTTP_201_CREATED, {'Location': api.url_for(InventoryResource, inventory_id=inventory.id, _external=True)}
 
 
-
-
-
-
-
 ######################################################################
 #  PATH: /inventory/{id}
 ######################################################################
@@ -123,27 +118,6 @@ class InventoryResource(Resource):
     PUT /inventory/{id} - Updates an inventory item specified by id as per data passed in body
     GET /inventory/{id} - Returns an inventory item specified by id if it exists
     """
-    ######################################################################
-    # RETRIEVE A Inventory
-    ######################################################################
-    @api.doc('get_inventory')
-    @api.response(404, 'Inventory not found')
-    @api.marshal_with(inventory_model)
-    def get(self,inventory_id):
-        """ Retrieves a Inventory with a specific id """
-        app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
-
-
-        inventory = Inventory.find(inventory_id)
-        if inventory:
-            message = inventory.to_json()
-            return_code = status.HTTP_200_OK
-        else:
-            message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
-            return_code = status.HTTP_404_NOT_FOUND
-
-        return message, return_code
-
     #------------------------------------------------------------------
     # DELETE A INVENTORY
     #------------------------------------------------------------------
@@ -166,6 +140,7 @@ class InventoryResource(Resource):
     @api.doc('update_inventory')
     @api.response(404, 'Inventory not found')
     @api.response(400, 'The posted Inventory data was not valid')
+    @api.response(200, 'Inventory Updated')
     @api.expect(inventory_model)
     @api.marshal_with(inventory_model)
     def put(self, inventory_id):
@@ -194,6 +169,26 @@ class InventoryResource(Resource):
         return message, return_code
 
 
+    @api.doc('get_inventory')
+    @api.response(404, 'Inventory not found')
+    @api.marshal_with(inventory_model)
+    def get(self, inventory_id):
+        """ Retrieves a Inventory with a specific id """
+        app.logger.info('Finding a inventory with id [{}]'.format(inventory_id))
+
+
+        inventory = Inventory.find(inventory_id)
+        if inventory:
+            message = inventory.to_json()
+            return_code = status.HTTP_200_OK
+        else:
+            message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
+            return_code = status.HTTP_404_NOT_FOUND
+
+        app.logger.info(message)
+        return message, return_code
+
+
 ######################################################################
 #  PATH: /inventory/reorder
 ######################################################################
@@ -206,7 +201,7 @@ class ReorderAllAction(Resource):
     PUT /inventory/reorder - Reorders all inventory items whose count is less than restock level
     """
     @api.doc('reorder_items')
-    @api.marshal_list_with(inventory_model)
+    @api.marshal_with(inventory_model)
     def put(self):
         "Reorder all the items whose count is less than restock level"
         app.logger.info('Reordering Items')
@@ -228,7 +223,7 @@ class ReorderOneAction(Resource):
     PUT /inventory/{id}/reorder - Reorders inventory item specified by id if its count is less than restock level
     """
     @api.doc('reorder_items')
-    @api.marshal_list_with(inventory_model)
+    @api.marshal_with(inventory_model)
     def put(self, inventory_id):
         "Reorders item specified by id if it's count is less than restock level"
         app.logger.info('Reordering Item :: ' + str(inventory_id))
