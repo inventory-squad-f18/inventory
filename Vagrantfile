@@ -54,6 +54,19 @@ Vagrant.configure(2) do |config|
     apt-get install -y git zip tree python-pip python-dev
     apt-get -y autoremove
     pip install --upgrade pip
+
+    echo "\n***********************************"
+    echo " Installing PhantomJS for Selenium"
+    echo "***********************************\n"
+    sudo apt-get install -y chrpath libssl-dev libxft-dev
+    cd ~
+    export PHANTOM_JS="phantomjs-1.9.7-linux-x86_64"
+    wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.bz2
+    sudo tar xvjf $PHANTOM_JS.tar.bz2
+    sudo mv $PHANTOM_JS /usr/local/share
+    sudo ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+    rm -f $PHANTOM_JS.tar.bz2
+
     # Install app dependencies
     cd /vagrant
     sudo pip install -r requirements.txt
