@@ -1,7 +1,8 @@
 """
 This Package contains all opf the RESTful resources
 """
-from .pet_resource import PetResource
-from .pet_collection import PetCollection
-from .home_page import HomePage
-from .purchase_action import PurchaseAction
+from .inventory_resource import InventoryResource
+from .inventory_collection import InventoryCollection
+# from .home_page import HomePage
+from .reorder_all_action import ReorderAllAction
+from .reorder_one_action import ReorderOneAction
