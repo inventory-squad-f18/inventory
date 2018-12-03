@@ -1,8 +1,8 @@
 from flask import jsonify, request
 from flask_api import status
-from models import Inventory, DataValidationError
+from service.models import Inventory, DataValidationError
 from flask_restplus import Resource
-from service import app, api
+from service import app, api, inventory_model
 
 ######################################################################
 #  PATH: /inventory/{id}

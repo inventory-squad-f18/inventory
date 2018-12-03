@@ -11,7 +11,7 @@ import os
 import sys
 import logging
 from flask import Flask
-from flask_restful import Api
+from flask_restplus import Api, fields, reqparse
 from .models import Inventory, DataValidationError
 
 app = Flask(__name__)

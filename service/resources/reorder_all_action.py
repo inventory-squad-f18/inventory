@@ -1,11 +1,8 @@
-import os
-import sys
-import logging
 from flask import Flask, Response, jsonify, request, json, url_for, make_response
 from flask_api import status
-from models import Inventory, DataValidationError
+from service.models import Inventory, DataValidationError
 from flask_restplus import Api, Resource, fields, reqparse
-from . import app
+from service import app, api, inventory_model
 
 ######################################################################
 #  PATH: /inventory/reorder

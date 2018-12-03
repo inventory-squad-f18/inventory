@@ -1,3 +1,4 @@
+from flask import request, jsonify
 from flask_api import status
 from service.models import Inventory, DataValidationError
 from flask_restplus import Resource, fields, reqparse
