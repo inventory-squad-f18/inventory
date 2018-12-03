@@ -8,8 +8,8 @@ import os
 import json
 import time
 from mock import patch
-from app.models import Inventory, DataValidationError
-from app import app
+from service.models import Inventory, DataValidationError
+from service import app
 
 
 
