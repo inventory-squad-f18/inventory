@@ -21,7 +21,7 @@ $(function () {
         $("#inventory_condition").val("");
         $("#inventory_count").val("");
     }
-    
+
 
     // Updates the flash message area
     function flash_message(message) {
@@ -169,50 +169,25 @@ $(function () {
 
     $("#search-btn").click(function () {
 
-        var name = $("#inventory_name").val();
-        var category = $("#inventory_category").val();
-        var available = $("#inventory_available").val() == "true";
-
-        var queryString = ""
-
-        if (name) {
-            queryString += 'name=' + name
-        }
-        if (category) {
-            if (queryString.length > 0) {
-                queryString += '&category=' + category
-            } else {
-                queryString += 'category=' + category
-            }
-        }
-        if (available) {
-            if (queryString.length > 0) {
-                queryString += '&available=' + available
-            } else {
-                queryString += 'available=' + available
-            }
-        }
-
         var ajax = $.ajax({
             type: "GET",
-            url: "/inventorys?" + queryString,
-            contentType:"application/json",
-            data: ''
+            url: "/inventory"
         })
 
         ajax.done(function(res){
             //alert(res.toSource())
+            console.log("heh ");
             $("#search_results").empty();
             $("#search_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
-            header += '<th style="width:40%">Name</th>'
-            header += '<th style="width:40%">Category</th>'
-            header += '<th style="width:10%">Available</th></tr>'
+            header += '<th style="width:40%">Count</th>'
+            header += '<th style="width:40%">Condition</th>'
+            header += '<th style="width:10%">Restock_level</th></tr>'
             $("#search_results").append(header);
             for(var i = 0; i < res.length; i++) {
                 inventory = res[i];
-                var row = "<tr><td>"+inventory.id+"</td><td>"+inventory.name+"</td><td>"+inventory.category+"</td><td>"+inventory.available+"</td></tr>";
+                var row = "<tr><td>"+inventory.id+"</td><td>"+inventory.count+"</td><td>"+inventory.condition+"</td><td>"+inventory.restock_level+"</td></tr>";
                 $("#search_results").append(row);
             }
 

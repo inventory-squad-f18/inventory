@@ -9,7 +9,6 @@ Background:
         | 101  | 1000     | 100           | new       | 10            |
         | 102  | 500      | 30            | open-box  | 5             |
 
-
 Scenario: The server is running
     When I visit the "Home Page"
     Then I should see "Inventory REST API Service" in the title
@@ -31,3 +30,9 @@ Scenario: Create a Pet
     And I press the "Create" button
     Then I should see the message "Success"
 
+Scenario: List all inventories
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "101" in the results
+    And I should see "102" in the results
+    And I should see "open-box" in the results
