@@ -50,7 +50,7 @@ $(function () {
         };
         var ajax = $.ajax({
             type: "POST",
-            url: "/inventory",
+            url: "/api/inventory",
             contentType:"application/json",
             data: JSON.stringify(data),
         });
@@ -87,7 +87,7 @@ $(function () {
 
         var ajax = $.ajax({
                 type: "PUT",
-                url: "/inventory/" + id,
+                url: "/api/inventory/" + id,
                 contentType:"application/json",
                 data: JSON.stringify(data)
             })
@@ -113,7 +113,7 @@ $(function () {
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/inventory/" + inventory_id,
+            url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: ''
         })
@@ -141,7 +141,7 @@ $(function () {
 
         var ajax = $.ajax({
             type: "DELETE",
-            url: "/inventory/" + inventory_id,
+            url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: '',
         })
@@ -173,7 +173,7 @@ $(function () {
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/inventory"
+            url: "/api/inventory"
         })
 
         ajax.done(function(res){

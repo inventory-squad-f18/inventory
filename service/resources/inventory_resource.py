@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_api import status
 from service.models import Inventory, DataValidationError
 from flask_restplus import Resource
