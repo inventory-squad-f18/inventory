@@ -36,3 +36,10 @@ Scenario: List all inventories
     Then I should see "101" in the results
     And I should see "102" in the results
     And I should see "open-box" in the results
+
+Scenario: Delete one Inventory
+    When I visit the "Home Page"
+    And I set the "Id" to "102"
+    And I press the "Delete" button
+    And I press the "Search" button
+    Then I should not see "open-box" in the results
