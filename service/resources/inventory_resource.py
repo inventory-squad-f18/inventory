@@ -50,7 +50,6 @@ class InventoryResource(Resource):
         app.logger.info('Updating a inventory')
         inventory = Inventory.find(inventory_id)
         if inventory:
-            print "find inventory ",inventory.to_json()
             payload = request.get_json()
             payload["id"]=inventory_id
             app.logger.info("payload " + str(payload) + str(type(payload)) + str(inventory.to_json()))
@@ -87,3 +86,12 @@ class InventoryResource(Resource):
 
         app.logger.info(message)
         return message, return_code
+
+######################################################################
+# DELETE ALL PET DATA (for testing only)
+######################################################################
+@app.route('/inventory/reset', methods=['DELETE'])
+def inventory_reset():
+    """ Removes all pets from the database """
+    Inventory.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
