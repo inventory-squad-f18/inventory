@@ -71,21 +71,23 @@ $(function () {
     // ****************************************
 
     $("#update-btn").click(function () {
-
-        var inventory_id = $("#inventory_id").val();
-        var name = $("#inventory_name").val();
-        var category = $("#inventory_category").val();
-        var available = $("#inventory_available").val() == "true";
+        var id = $("#inventory_id").val();
+        var count = $("#inventory_count").val();
+        var condition = $("#inventory_condition").val();
+        var inventory_reorder_point = $("#inventory_reorder_point").val();
+        var inventory_restock_level = $("#inventory_restock_level").val();
 
         var data = {
-            "name": name,
-            "category": category,
-            "available": available
+            "id": parseInt(id,10),
+            "condition": condition,
+            "count": parseInt(count,10),
+            "reorder_point": parseInt(inventory_reorder_point,10),
+            "restock_level": parseInt(inventory_restock_level,10),
         };
 
         var ajax = $.ajax({
                 type: "PUT",
-                url: "/inventorys/" + inventory_id,
+                url: "/inventory/" + id,
                 contentType:"application/json",
                 data: JSON.stringify(data)
             })
