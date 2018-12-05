@@ -61,7 +61,7 @@ class TestInventoryService(unittest.TestCase):
 
     def test_create_inventory(self):
         """ Create a Inventory """
-        new_inventory = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        new_inventory = {"id": 101, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
 
         data = json.dumps(new_inventory)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
@@ -78,7 +78,7 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.post('/inventory', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-        new_inventory = {"id": 100, "count": 1000, "restock-level": 100, "reorder-point": 101, "condition": "new"}
+        new_inventory = {"id": 100, "count": 1000, "restock_level": 100, "reorder_point": 101, "condition": "new"}
         data = json.dumps(new_inventory)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
@@ -88,11 +88,11 @@ class TestInventoryService(unittest.TestCase):
         # create a inventory with id 101 first
         # item = Inventory(id = 101, data=(1000, 100, 10, "new"))
         # item.save()
-        inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory1 = {"id": 101, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
         # update the inventory with id 101
-        new_inventory = {"count": 900, "restock-level": 90, "reorder-point": 9, "condition": "new"}
+        new_inventory = {"count": 900, "restock_level": 90, "reorder_point": 9, "condition": "new"}
         data = json.dumps(new_inventory)
         resp = self.app.put('/inventory/101', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -101,17 +101,17 @@ class TestInventoryService(unittest.TestCase):
         new_json = json.loads(resp.data)
 
         self.assertEqual(new_json['count'], 900)
-        self.assertEqual(new_json['restock-level'], 90)
-        self.assertEqual(new_json['reorder-point'], 9)
+        self.assertEqual(new_json['restock_level'], 90)
+        self.assertEqual(new_json['reorder_point'], 9)
 
-        new_inventory = {"count": 900, "restock-level": 100, "reorder-point": 101, "condition": "new"}
+        new_inventory = {"count": 900, "restock_level": 100, "reorder_point": 101, "condition": "new"}
         data = json.dumps(new_inventory)
         resp = self.app.put('/inventory/101', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_inventory_not_found(self):
         """ Update a Inventory that can't be found """
-        new_inventory = {"count": 900, "restock-level": 90, "reorder-point": 9, "condition": "new"}
+        new_inventory = {"count": 900, "restock_level": 90, "reorder_point": 9, "condition": "new"}
         data = json.dumps(new_inventory)
         resp = self.app.put('/inventory/0', data=data, content_type='application/json')
         self.assertEquals(resp.status_code, status.HTTP_404_NOT_FOUND)
@@ -119,7 +119,7 @@ class TestInventoryService(unittest.TestCase):
     def test_delete_inventory(self):
         """ Delete a Inventory that exists """
         # save the current number of inventory for later comparrison
-        inventory = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory = {"id": 1, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
@@ -163,11 +163,11 @@ class TestInventoryService(unittest.TestCase):
         self.assertEqual(self.get_inventory_count(), 0)
         self.assertEqual(self.get_inventory_count(condition = 'new'), 0)
         # create inventories
-        inventory1 = {"id": 101, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory1 = {"id": 101, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
-        inventory2 = {"id": 102, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        inventory2 = {"id": 102, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "open-box"}
         data = json.dumps(inventory2)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
@@ -185,11 +185,11 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.put('/inventory/reorder')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-        inventory1 = {"id": 101, "count": 9, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory1 = {"id": 101, "count": 9, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
-        inventory2 = {"id": 102, "count": 49, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        inventory2 = {"id": 102, "count": 49, "restock_level": 100, "reorder_point": 10, "condition": "open-box"}
         data = json.dumps(inventory2)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
@@ -201,12 +201,12 @@ class TestInventoryService(unittest.TestCase):
         data = json.loads(resp.data)
 
         for item in data:
-            self.assertEqual(item['count'], item['restock-level'])
+            self.assertEqual(item['count'], item['restock_level'])
 
         sleep(0.5)
         Inventory.remove_all()
 
-        inventory1 = {"id": 101, "count": 101, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory1 = {"id": 101, "count": 101, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
@@ -218,16 +218,16 @@ class TestInventoryService(unittest.TestCase):
         data = json.loads(resp.data)
 
         for item in data:
-            self.assertTrue(item['count'] != item['restock-level'])
+            self.assertTrue(item['count'] != item['restock_level'])
 
         sleep(0.5)
         Inventory.remove_all()
 
-        inventory1 = {"id": 101, "count": 60, "restock-level": 100, "reorder-point": 10, "condition": "new"}
+        inventory1 = {"id": 101, "count": 60, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
-        inventory2 = {"id": 102, "count": 49, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        inventory2 = {"id": 102, "count": 49, "restock_level": 100, "reorder_point": 10, "condition": "open-box"}
         data = json.dumps(inventory2)
         resp = self.app.post('/inventory', data=data, content_type='application/json')
 
@@ -240,7 +240,7 @@ class TestInventoryService(unittest.TestCase):
 
         for item in data:
             if item['id'] == 101:
-                self.assertTrue(item['count'] == item['restock-level'])
+                self.assertTrue(item['count'] == item['restock_level'])
 
 ######################################################################
 # Utility functions

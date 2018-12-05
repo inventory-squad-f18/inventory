@@ -22,8 +22,8 @@ The API is RESTful and returns result in JSON format. For futher details about J
 |-------|------|----------|-------------|
 | id | int | Yes | ID of the inventory item |
 | count | int | Yes | Count of the item present in warehouse |
-| reorder-point | int | Yes | If count falls below this value then it requires ordering to reach restock-level |
-| restock-level | int | Yes | Point till which to reorder the item |
+| reorder_point | int | Yes | If count falls below this value then it requires ordering to reach restock_level |
+| restock_level | int | Yes | Point till which to reorder the item |
 | condition | string in ('new', 'used', 'open-box') | Yes | Condition of the item |
 
 ## GET Inventories
@@ -40,14 +40,14 @@ It allows to create new inventory item.
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> } | list of all the inventory items |
+| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | list of all the inventory items |
 
 ## Update Inventory Item
 It allows to update an existing inventory item
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory/\<int::inventory_id> | PUT | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock-level': \<int:restock-level>, 'reorder-point': \<int:reorder-point>, 'condition': \<string:condition> } | Updated inventory item |
+| /inventory/\<int::inventory_id> | PUT | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | Updated inventory item |
 
 ## Delete Inventory Item
 It allows to delete an inventory item

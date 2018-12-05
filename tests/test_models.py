@@ -134,20 +134,20 @@ class TestModels(unittest.TestCase):
         self.assertIsInstance(json_val, dict)
         self.assertIn('id', json_val.keys())
         self.assertIn('count', json_val.keys())
-        self.assertIn('restock-level', json_val.keys())
-        self.assertIn('reorder-point', json_val.keys())
+        self.assertIn('restock_level', json_val.keys())
+        self.assertIn('reorder_point', json_val.keys())
         self.assertIn('condition', json_val.keys())
         self.assertEqual(json_val['id'], 101)
         self.assertEqual(json_val['count'], 1000)
-        self.assertEqual(json_val['restock-level'], 100)
-        self.assertEqual(json_val['reorder-point'], 10)
+        self.assertEqual(json_val['restock_level'], 100)
+        self.assertEqual(json_val['reorder_point'], 10)
         self.assertEqual(json_val['condition'], "new")
 
 
     def test_from_json(self):
         """ Test deserialization of a item from json """
 
-        data = {"id": 1, "count": 1000, "restock-level": 100, "reorder-point": 10, "condition": "open-box"}
+        data = {"id": 1, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "open-box"}
         inventory=Inventory(id=data["id"])
         item =inventory.from_json(data)
         inventory.save()
@@ -161,7 +161,7 @@ class TestModels(unittest.TestCase):
             self.assertRaises(DataValidationError, inventory.from_json("test"))
         except:
             pass
-        data = {"id": 1, "count": 1000, "restock-point": 100, "reorder-point": 10, "condition": "open-box"}
+        data = {"id": 1, "count": 1000, "restock-point": 100, "reorder_point": 10, "condition": "open-box"}
         try:
             self.assertRaises(DataValidationError, inventory.from_json(data))
         except:

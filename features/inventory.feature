@@ -5,7 +5,7 @@ Feature: The inventory service back-end
 
 Background:
     Given the following inventories
-        | id   | count    | restock-level | condition | reorder-point |
+        | id   | count    | restock_level | condition | reorder_point |
         | 101  | 1000     | 100           | new       | 10            |
         | 102  | 500      | 30            | open-box  | 5             |
 
@@ -21,4 +21,13 @@ Scenario: Get one Inventory
     And I press the "Retrieve" button
     Then I should see "open-box" in the "Condition" field
 
+Scenario: Create a Pet
+    When I visit the "Home Page"
+    And I set the "Id" to "103"
+    And I set the "Count" to "1000"
+    And I set the "restock_level" to "300"
+    And I set the "reorder_point" to "100"
+    And I set the "Condition" to "new"
+    And I press the "Create" button
+    Then I should see the message "Success"
 
