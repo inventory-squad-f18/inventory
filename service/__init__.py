@@ -25,6 +25,7 @@ def index():
     # return jsonify(name='Pet Demo REST API Service', version='1.0', url=url, data=data), status.HTTP_200_OK
     return app.send_static_file('index.html')
 
+
 api = Api(app,
           version='1.0.0',
           title='Inventory REST API Service',
@@ -54,6 +55,7 @@ from service.resources import InventoryCollection
 # from service.resources import HomePage
 from service.resources import ReorderAllAction
 from service.resources import ReorderOneAction
+from service.resources import ResetInventory
 
 # api.add_resource(HomePage, '/')
 # api.add_resource(PetCollection, '/pets')

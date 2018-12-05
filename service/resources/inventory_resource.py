@@ -7,7 +7,7 @@ from service import app, api, inventory_model
 ######################################################################
 #  PATH: /inventory/{id}
 ######################################################################
-@api.route('/inventory/<int:inventory_id>')
+@api.route('/api/inventory/<int:inventory_id>')
 @api.param('inventory_id', 'The Inventory identifier')
 class InventoryResource(Resource):
     """
@@ -87,11 +87,13 @@ class InventoryResource(Resource):
         app.logger.info(message)
         return message, return_code
 
-######################################################################
-# DELETE ALL PET DATA (for testing only)
-######################################################################
-@app.route('/inventory/reset', methods=['DELETE'])
-def inventory_reset():
-    """ Removes all pets from the database """
-    Inventory.remove_all()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+
+@api.route('/api/inventory/reset')
+class ResetInventory(Resource):
+
+    @api.doc('delete_all_inventory')
+    @api.response(204, 'Inventory deleted')
+    def delete(self):
+        """ Removes all pets from the database """
+        Inventory.remove_all()
+        return make_response('', status.HTTP_204_NO_CONTENT)

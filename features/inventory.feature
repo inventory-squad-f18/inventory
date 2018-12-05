@@ -20,7 +20,7 @@ Scenario: Get one Inventory
     And I press the "Retrieve" button
     Then I should see "open-box" in the "Condition" field
 
-Scenario: Create a Pet
+Scenario: Create a Inventory
     When I visit the "Home Page"
     And I set the "Id" to "103"
     And I set the "Count" to "1000"
@@ -28,7 +28,7 @@ Scenario: Create a Pet
     And I set the "reorder_point" to "100"
     And I set the "Condition" to "new"
     And I press the "Create" button
-    Then I should see the message "Success"
+    Then I should see the "Success"
 
 Scenario: List all inventories
     When I visit the "Home Page"

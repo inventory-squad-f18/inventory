@@ -19,8 +19,8 @@ BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
 def step_impl(context):
     """ Delete all Pets and load new ones """
     headers = {'Content-Type': 'application/json'}
-    context.resp = requests.delete(context.base_url + '/inventory/reset', headers=headers)
-    create_url = context.base_url + '/inventory'
+    context.resp = requests.delete(context.base_url + '/api/inventory/reset', headers=headers)
+    create_url = context.base_url + '/api/inventory'
     for row in context.table:
         data = {
             "id": int(row["id"]),
