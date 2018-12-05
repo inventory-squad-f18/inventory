@@ -43,3 +43,15 @@ Scenario: Delete one Inventory
     And I press the "Delete" button
     And I press the "Search" button
     Then I should not see "open-box" in the results
+
+Scenario: Update one Inventory
+    When I visit the "Home Page"
+    And I set the "Id" to "101"
+    And I press the "Retrieve" button
+    Then I should see "new" in the "Condition" field
+    When I change "Count" to "1001"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I set the "Id" to "101"
+    And I press the "Retrieve" button
+    Then I should see "1001" in the "Count" field
