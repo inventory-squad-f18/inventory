@@ -84,7 +84,7 @@ class Inventory(object):
 
     def to_json(self):
         """ serializes an inventory item into an dictionary """
-        return {"id": self.id, "count": self.count, "restock-level": self.restock_level, "reorder-point": self.reorder_point, "condition": self.condition}
+        return {"id": self.id, "count": self.count, "restock_level": self.restock_level, "reorder_point": self.reorder_point, "condition": self.condition}
 
 
     def from_json(self,json_val):
@@ -92,11 +92,11 @@ class Inventory(object):
         if not isinstance(json_val, dict):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
-            Inventory.validate_data(json_val['count'], json_val['restock-level'], json_val['reorder-point'], json_val['condition'])
+            Inventory.validate_data(json_val['count'], json_val['restock_level'], json_val['reorder_point'], json_val['condition'])
             # self.id = json_val['id']
             self.count = json_val['count']
-            self.restock_level = json_val['restock-level']
-            self.reorder_point = json_val['reorder-point']
+            self.restock_level = json_val['restock_level']
+            self.reorder_point = json_val['reorder_point']
             self.condition = json_val['condition']
         except DataValidationError:
             raise
@@ -145,13 +145,13 @@ class Inventory(object):
 
         if inventory_id:
             for doc in cls.database:
-                if doc['_id'] == str(inventory_id) and doc['count'] <= doc['restock-level']:
-                    doc['count'] = doc['restock-level']
+                if doc['_id'] == str(inventory_id) and doc['count'] <= doc['restock_level']:
+                    doc['count'] = doc['restock_level']
                     doc.save()
         else:
             for doc in cls.database:
-                if doc['count'] <= doc['restock-level']:
-                    doc['count'] = doc['restock-level']
+                if doc['count'] <= doc['restock_level']:
+                    doc['count'] = doc['restock_level']
                     doc.save()
 
     @classmethod

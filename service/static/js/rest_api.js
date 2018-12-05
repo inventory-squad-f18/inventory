@@ -6,22 +6,20 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        console.log(res)
         $("#inventory_id").val(res.id);
-        $("#inventory_name").val(res.name);
+        $("#inventory_restock_level").val(res.restock_level);
+        $("#inventory_reorder_point").val(res.reorder_point);
         $("#inventory_condition").val(res.condition);
-        if (res.available == true) {
-            $("#inventory_available").val("true");
-        } else {
-            $("#inventory_available").val("false");
-        }
+        $("#inventory_count").val(res.count);
     }
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#inventory_name").val("");
-        $("#inventory_category").val("");
-        $("#inventory_available").val("");
+        $("#inventory_id").val("");
+        $("#inventory_restock_level").val("");
+        $("#inventory_reorder_point").val("");
+        $("#inventory_condition").val("");
+        $("#inventory_count").val("");
     }
     
 
@@ -37,16 +35,19 @@ $(function () {
 
     $("#create-btn").click(function () {
 
-        var name = $("#inventory_name").val();
-        var category = $("#inventory_category").val();
-        var available = $("#inventory_available").val() == "true";
+        var id = $("#inventory_id").val();
+        var count = $("#inventory_count").val();
+        var condition = $("#inventory_condition").val();
+        var inventory_reorder_point = $("#inventory_reorder_point").val();
+        var inventory_restock_level = $("#inventory_restock_level").val();
 
         var data = {
-            "id": id,
+            "id": parseInt(id,10),
             "condition": condition,
-            "available": available
+            "count": parseInt(count,10),
+            "reorder_point": parseInt(inventory_reorder_point,10),
+            "restock_level": parseInt(inventory_restock_level,10),
         };
-
         var ajax = $.ajax({
             type: "POST",
             url: "/inventory",

@@ -26,8 +26,8 @@ def step_impl(context):
             "id": int(row["id"]),
             "condition": row['condition'],
             "count": int(row["count"]),
-            "restock-level": int(row["restock-level"]),
-            "reorder-point": int(row["reorder-point"])
+            "restock_level": int(row["restock_level"]),
+            "reorder_point": int(row["reorder_point"])
             }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
@@ -98,3 +98,16 @@ def step_impl(context, text_string, element_name):
     #     )
     # )
     # expect(found).to_be(True)
+
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    element = context.driver.find_element_by_id('flash_message')
+    expect(element.text).to_contain(message)
+    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+    #     expected_conditions.text_to_be_present_in_element(
+    #         (By.ID, 'flash_message'),
+    #         message
+    #     )
+    # )
+    # expect(found).to_be(True)
+
