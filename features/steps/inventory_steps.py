@@ -15,6 +15,24 @@ from compare import expect, ensure
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
 
 
+@given('the following inventories')
+def step_impl(context):
+    """ Delete all Pets and load new ones """
+    headers = {'Content-Type': 'application/json'}
+    context.resp = requests.delete(context.base_url + '/inventory/reset', headers=headers)
+    create_url = context.base_url + '/inventory'
+    for row in context.table:
+        data = {
+            "id": int(row["id"]),
+            "condition": row['condition'],
+            "count": int(row["count"]),
+            "restock-level": int(row["restock-level"]),
+            "reorder-point": int(row["reorder-point"])
+            }
+        payload = json.dumps(data)
+        context.resp = requests.post(create_url, data=payload, headers=headers)
+        expect(context.resp.status_code).to_equal(201)
+
 #@given(u'the server is started')
 #def step_impl(context):
 #    context.app = server.app.test_client()
@@ -37,3 +55,46 @@ def step_impl(context, message):
 def step_impl(context, message):
     error_msg = "I should not see '%s' in '%s'" % (message, context.resp.text)
     ensure(message in context.resp.text, False, error_msg)
+
+@when('I press the "{button}" button')
+def step_impl(context, button):
+    button_id = button.lower() + '-btn'
+    context.driver.find_element_by_id(button_id).click()
+
+@when('I set the "{element_name}" to "{text_string}"')
+def step_impl(context, element_name, text_string):
+    element_id = 'inventory_' + element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    element.clear()
+    element.send_keys(text_string)
+
+@then('I should see "{name}" in the results')
+def step_impl(context, name):
+    element = context.driver.find_element_by_id('search_results')
+    expect(element.text).to_contain(name)
+    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+    #     expected_conditions.text_to_be_present_in_element(
+    #         (By.ID, 'search_results'),
+    #         name
+    #     )
+    # )
+    # expect(found).to_be(True)
+
+@then('I should not see "{name}" in the results')
+def step_impl(context, name):
+    element = context.driver.find_element_by_id('search_results')
+    error_msg = "I should not see '%s' in '%s'" % (name, element.text)
+    ensure(name in element.text, False, error_msg)
+
+@then('I should see "{text_string}" in the "{element_name}" field')
+def step_impl(context, text_string, element_name):
+    element_id = 'inventory_' + element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    expect(element.get_attribute('value')).to_equal(text_string)
+    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+    #     expected_conditions.text_to_be_present_in_element_value(
+    #         (By.ID, element_id),
+    #         text_string
+    #     )
+    # )
+    # expect(found).to_be(True)
