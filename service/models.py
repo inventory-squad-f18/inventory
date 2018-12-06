@@ -116,7 +116,7 @@ class Inventory(object):
             return None
         try:
             document = cls.database[str(inventory_id)]
-            if document.exists():
+            if document.exists() and 'count' in document.keys():
                 cls.logger.info("Found :: " + str(document))
                 inventory = Inventory(int(document['_id']))
                 inventory.from_json(document)
