@@ -14,9 +14,9 @@ class InventoryResource(Resource):
     InventoryResource class
 
     Allows the manipulation of a single inventory item
-    DELETE /inventory/{id} -  Deletes a inventory item pecified by id if it exists
-    PUT /inventory/{id} - Updates an inventory item specified by id as per data passed in body
-    GET /inventory/{id} - Returns an inventory item specified by id if it exists
+    DELETE /api/inventory/{id} -  Deletes a inventory item pecified by id if it exists
+    PUT /api/inventory/{id} - Updates an inventory item specified by id as per data passed in body
+    GET /api/inventory/{id} - Returns an inventory item specified by id if it exists
     """
     #------------------------------------------------------------------
     # DELETE A INVENTORY
