@@ -18,6 +18,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
 app.config['LOGGING_LEVEL'] = logging.INFO
 
+Inventory.logger = app.logger;
+
 @app.route('/')
 def index():
     # data = '{name: <string>, category: <string>}'
@@ -77,6 +79,6 @@ app.logger.info('Logging established')
 
 
 @app.before_first_request
-def init_db(dbname="inventory"):
+def init_db():
     """ Initlaize the model """
-    Inventory.init_db(dbname)
+    Inventory.init_db()

@@ -78,7 +78,7 @@ class InventoryResource(Resource):
 
         inventory = Inventory.find(inventory_id)
 
-        app.logger.info(inventory)
+        # app.logger.info(inventory)
         if inventory:
             message = inventory.to_json()
             return_code = status.HTTP_200_OK

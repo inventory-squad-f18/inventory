@@ -7,6 +7,7 @@ import json
 import requests
 from behave import *
 from compare import expect, ensure
+from time import sleep
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions
@@ -17,9 +18,10 @@ BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
 
 @given('the following inventories')
 def step_impl(context):
-    """ Delete all Pets and load new ones """
+    """ Delete all inventory items and load new ones """
     headers = {'Content-Type': 'application/json'}
     context.resp = requests.delete(context.base_url + '/api/inventory/reset', headers=headers)
+    expect(context.resp.status_code).to_equal(204)
     create_url = context.base_url + '/api/inventory'
     for row in context.table:
         data = {
@@ -60,6 +62,7 @@ def step_impl(context, message):
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
     context.driver.find_element_by_id(button_id).click()
+    # sleep(2)
 
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
@@ -99,7 +102,7 @@ def step_impl(context, text_string, element_name):
     # )
     # expect(found).to_be(True)
 
-@then('I should see the message "{message}"')
+@then('I should see the "{message}"')
 def step_impl(context, message):
     element = context.driver.find_element_by_id('flash_message')
     expect(element.text).to_contain(message)
