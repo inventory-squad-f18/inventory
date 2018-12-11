@@ -8,6 +8,7 @@ Background:
         | id   | count    | restock_level | condition | reorder_point |
         | 101  | 1000     | 100           | new       | 10            |
         | 102  | 500      | 30            | open-box  | 5             |
+        | 103  | 90       | 100           | new       | 10            |
 
     Scenario: Get one Inventory
         When I visit the "Home Page"
@@ -50,3 +51,12 @@ Background:
         When I set the "Id" to "101"
         And I press the "Retrieve" button
         Then I should see "1001" in the "Count" field
+
+    Scenario: Reorder one Inventory
+        When I visit the "Home Page"
+        And I set the "Id" to "103"
+        And I press the "Retrieve" button
+        Then I should see "90" in the "Count" field
+        When I press the "Reorder" button
+        Then I should see the "Success"
+        Then I should see "100" in the "Count" field

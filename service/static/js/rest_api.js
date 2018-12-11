@@ -90,7 +90,7 @@ $(function () {
                 url: "/api/inventory/" + id,
                 contentType:"application/json",
                 data: JSON.stringify(data)
-            })
+            });
 
         ajax.done(function(res){
             update_form_data(res)
@@ -116,7 +116,7 @@ $(function () {
             url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: ''
-        })
+        });
 
         ajax.done(function(res){
             //alert(res.toSource())
@@ -144,7 +144,7 @@ $(function () {
             url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: '',
-        })
+        });
 
         ajax.done(function(res){
             clear_form_data()
@@ -164,7 +164,34 @@ $(function () {
         $("#inventory_id").val("");
         clear_form_data()
     });
+    // ****************************************
+    // Reorder a inventory
+    // ****************************************
 
+    $("#reorder-btn").click(function () {
+        var id = $("#inventory_id").val();
+
+        var data = {
+            "id": parseInt(id,10),
+        };
+
+        var ajax = $.ajax({
+                type: "PUT",
+                url: "/api/inventory/" + id + "/reorder",
+                contentType:"application/json",
+                data: JSON.stringify(data)
+            });
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
     // ****************************************
     // Search for a inventory
     // ****************************************
@@ -174,7 +201,7 @@ $(function () {
         var ajax = $.ajax({
             type: "GET",
             url: "/api/inventory"
-        })
+        });
 
         ajax.done(function(res){
             //alert(res.toSource())
@@ -195,13 +222,11 @@ $(function () {
 
             $("#search_results").append('</table>');
 
-            flash_message("Success")
+            flash_message("Success");
         });
 
         ajax.fail(function(res){
             flash_message(res.responseJSON.message)
         });
-
     });
-
 })
