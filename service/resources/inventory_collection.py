@@ -8,7 +8,7 @@ from . import InventoryResource
 ######################################################################
 #  PATH: /inventory
 ######################################################################
-@api.route('/inventory', strict_slashes=False)
+@api.route('/api/inventory', strict_slashes=False)
 class InventoryCollection(Resource):
     """
     InventoryCollection class

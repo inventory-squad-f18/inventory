@@ -7,7 +7,7 @@ from service import app, api, inventory_model
 ######################################################################
 #  PATH: /inventory/reorder
 ######################################################################
-@api.route('/inventory/reorder')
+@api.route('/api/inventory/reorder')
 class ReorderAllAction(Resource):
     """
     ReorderAllAction class

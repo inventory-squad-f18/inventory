@@ -7,6 +7,8 @@ install: "pip install -r requirements.txt"
 
 script:
   - nosetests
+  - honcho start &
+  - behave
 
 after_success:
   - codecov

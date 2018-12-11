@@ -4,6 +4,7 @@ Package: app
 Package for the application models and services
 This module also sets up the logging to be used with gunicorn
 """
+#
 # RESTful Doc links:
 # https://flask-restful.readthedocs.io/en/0.3.6/intermediate-usage.html
 # https://flask-restful.readthedocs.io/en/0.3.6/quickstart.html
@@ -18,12 +19,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
 app.config['LOGGING_LEVEL'] = logging.INFO
 
+Inventory.logger = app.logger;
+
 @app.route('/')
 def index():
     # data = '{name: <string>, category: <string>}'
     # url = request.base_url + 'pets' # url_for('list_pets')
     # return jsonify(name='Pet Demo REST API Service', version='1.0', url=url, data=data), status.HTTP_200_OK
     return app.send_static_file('index.html')
+
 
 api = Api(app,
           version='1.0.0',
@@ -54,6 +58,7 @@ from service.resources import InventoryCollection
 # from service.resources import HomePage
 from service.resources import ReorderAllAction
 from service.resources import ReorderOneAction
+from service.resources import ResetInventory
 
 # api.add_resource(HomePage, '/')
 # api.add_resource(PetCollection, '/pets')
@@ -75,6 +80,6 @@ app.logger.info('Logging established')
 
 
 @app.before_first_request
-def init_db(dbname="inventory"):
+def init_db():
     """ Initlaize the model """
-    Inventory.init_db(dbname)
+    Inventory.init_db()

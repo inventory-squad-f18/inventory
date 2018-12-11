@@ -7,7 +7,7 @@ from service import app, api, inventory_model
 ######################################################################
 #  PATH: /inventory/{id}/reorder
 ######################################################################
-@api.route('/inventory/<int:inventory_id>/reorder')
+@api.route('/api/inventory/<int:inventory_id>/reorder')
 @api.param('inventory_id', 'The Inventory identifier')
 class ReorderOneAction(Resource):
     """

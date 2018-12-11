@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_api import status
 from service.models import Inventory, DataValidationError
 from flask_restplus import Resource
@@ -7,16 +7,16 @@ from service import app, api, inventory_model
 ######################################################################
 #  PATH: /inventory/{id}
 ######################################################################
-@api.route('/inventory/<int:inventory_id>')
+@api.route('/api/inventory/<int:inventory_id>')
 @api.param('inventory_id', 'The Inventory identifier')
 class InventoryResource(Resource):
     """
     InventoryResource class
 
     Allows the manipulation of a single inventory item
-    DELETE /inventory/{id} -  Deletes a inventory item pecified by id if it exists
-    PUT /inventory/{id} - Updates an inventory item specified by id as per data passed in body
-    GET /inventory/{id} - Returns an inventory item specified by id if it exists
+    DELETE /api/inventory/{id} -  Deletes a inventory item pecified by id if it exists
+    PUT /api/inventory/{id} - Updates an inventory item specified by id as per data passed in body
+    GET /api/inventory/{id} - Returns an inventory item specified by id if it exists
     """
     #------------------------------------------------------------------
     # DELETE A INVENTORY
@@ -49,6 +49,7 @@ class InventoryResource(Resource):
         """
         app.logger.info('Updating a inventory')
         inventory = Inventory.find(inventory_id)
+        app.logger.info(inventory)
         if inventory:
             payload = request.get_json()
             payload["id"]=inventory_id
@@ -77,6 +78,8 @@ class InventoryResource(Resource):
 
 
         inventory = Inventory.find(inventory_id)
+
+        # app.logger.info(inventory)
         if inventory:
             message = inventory.to_json()
             return_code = status.HTTP_200_OK
@@ -87,11 +90,13 @@ class InventoryResource(Resource):
         app.logger.info(message)
         return message, return_code
 
-######################################################################
-# DELETE ALL PET DATA (for testing only)
-######################################################################
-@app.route('/inventory/reset', methods=['DELETE'])
-def inventory_reset():
-    """ Removes all pets from the database """
-    Inventory.remove_all()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+
+@api.route('/api/inventory/reset')
+class ResetInventory(Resource):
+
+    @api.doc('delete_all_inventory')
+    @api.response(204, 'Inventory deleted')
+    def delete(self):
+        """ Removes all pets from the database """
+        Inventory.remove_all()
+        return make_response('', status.HTTP_204_NO_CONTENT)

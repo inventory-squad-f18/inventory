@@ -17,7 +17,7 @@ class Inventory(object):
     data = []
     database = None
     client = None
-    logger = logging.getLogger(__name__)
+    logger = None
 
 
 
@@ -60,15 +60,19 @@ class Inventory(object):
         # if id is duplicate?, if needs update
         try:
             document = self.database[str(self.id)]
+            if not document.exists():
+                document = None
         except KeyError:
             document = None
         doc = self.to_json()
         doc['_id'] = str(doc['id'])
         del doc['id']
         if document:
+            self.logger.info("Saving :: " + str(document))
             document.update(doc)
             document.save()
         else:
+            self.logger.info("Saving :: " + str(document))
             document = self.database.create_document(doc)
 
 
@@ -79,6 +83,7 @@ class Inventory(object):
         except KeyError:
             document = None
         if document and document.exists():
+            self.logger.info("Deleting :: " + str(document))
             document.delete()
 
 
@@ -108,10 +113,12 @@ class Inventory(object):
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
         if not cls.database:
+            cls.logger.info("Database not found")
             return None
         try:
             document = cls.database[str(inventory_id)]
-            if document.exists():
+            if document.exists() and 'count' in document.keys():
+                cls.logger.info("Found :: " + str(document))
                 inventory = Inventory(int(document['_id']))
                 inventory.from_json(document)
                 return inventory
@@ -132,6 +139,7 @@ class Inventory(object):
 
         for doc in cls.database:
             if doc['condition'] == condition:
+                cls.logger.info("Matched :: " + str(doc))
                 inventory = Inventory(int(doc['_id']))
                 inventory.from_json(doc)
                 results.append(inventory)
@@ -160,6 +168,7 @@ class Inventory(object):
         results = []
 
         for doc in cls.database:
+            cls.logger.info(doc)
             inventory = Inventory(int(doc['_id']))
             inventory.from_json(doc)
             results.append(inventory)
@@ -172,10 +181,11 @@ class Inventory(object):
             document.delete()
 
     @staticmethod
-    def init_db(dbname='inventory'):
+    def init_db():
         """
         Initialized Coundant database connection
         """
+        dbname = 'inventory'
         opts = {}
         vcap_services = {}
         # Try and get VCAP from the environment or a file if developing
