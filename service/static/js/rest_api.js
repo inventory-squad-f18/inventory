@@ -90,7 +90,7 @@ $(function () {
                 url: "/api/inventory/" + id,
                 contentType:"application/json",
                 data: JSON.stringify(data)
-            })
+            });
 
         ajax.done(function(res){
             update_form_data(res)
@@ -116,7 +116,7 @@ $(function () {
             url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: ''
-        })
+        });
 
         ajax.done(function(res){
             //alert(res.toSource())
@@ -144,7 +144,7 @@ $(function () {
             url: "/api/inventory/" + inventory_id,
             contentType:"application/json",
             data: '',
-        })
+        });
 
         ajax.done(function(res){
             clear_form_data()
@@ -200,14 +200,20 @@ $(function () {
 
     $("#search-btn").click(function () {
 
+        var condition = $("#inventory_condition").val();
+        var urlString = "/api/inventory";
+        if(condition != "") {
+            urlString += "?condition=" + condition;
+        }
+
+        // console.log(urlString);
+
         var ajax = $.ajax({
             type: "GET",
-            url: "/api/inventory"
-        })
+            url: urlString
+        });
 
         ajax.done(function(res){
-            //alert(res.toSource())
-            console.log("heh ");
             $("#search_results").empty();
             $("#search_results").append('<table class="table-striped">');
             var header = '<tr>'
