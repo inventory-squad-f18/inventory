@@ -50,3 +50,10 @@ Background:
         When I set the "Id" to "101"
         And I press the "Retrieve" button
         Then I should see "1001" in the "Count" field
+
+    Scenario: Query inventory
+        When I visit the "Home Page"
+        And I set the "Condition" to "new"
+        And I press the "Search" button
+        Then I should see "new" in the results
+        And I should not see "open-box" in the results
