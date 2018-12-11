@@ -4,6 +4,7 @@ Package: app
 Package for the application models and services
 This module also sets up the logging to be used with gunicorn
 """
+#
 # RESTful Doc links:
 # https://flask-restful.readthedocs.io/en/0.3.6/intermediate-usage.html
 # https://flask-restful.readthedocs.io/en/0.3.6/quickstart.html
