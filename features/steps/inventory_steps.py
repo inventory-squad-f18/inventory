@@ -8,11 +8,11 @@ import requests
 from behave import *
 from compare import expect, ensure
 from time import sleep
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 
-# WAIT_SECONDS = 30
+WAIT_SECONDS = 3
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000')
 
 
@@ -50,7 +50,14 @@ def step_impl(context):
 @then('I should see "{message}" in the title')
 def step_impl(context, message):
     """ Check the document title for a message """
-    expect(context.driver.title).to_contain(message)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'title'),
+            message
+        )
+    )
+    expect(found).to_be(True)
+    # expect(context.driver.title).to_contain(message)
 
 
 @then('I should not see "{message}"')
@@ -73,15 +80,15 @@ def step_impl(context, element_name, text_string):
 
 @then('I should see "{name}" in the results')
 def step_impl(context, name):
-    element = context.driver.find_element_by_id('search_results')
-    expect(element.text).to_contain(name)
-    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.text_to_be_present_in_element(
-    #         (By.ID, 'search_results'),
-    #         name
-    #     )
-    # )
-    # expect(found).to_be(True)
+    # element = context.driver.find_element_by_id('search_results')
+    # expect(element.text).to_contain(name)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'search_results'),
+            name
+        )
+    )
+    expect(found).to_be(True)
 
 @then('I should not see "{name}" in the results')
 def step_impl(context, name):
@@ -92,34 +99,34 @@ def step_impl(context, name):
 @then('I should see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
     element_id = 'inventory_' + element_name.lower()
-    element = context.driver.find_element_by_id(element_id)
-    expect(element.get_attribute('value')).to_equal(text_string)
-    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.text_to_be_present_in_element_value(
-    #         (By.ID, element_id),
-    #         text_string
-    #     )
-    # )
-    # expect(found).to_be(True)
+    # element = context.driver.find_element_by_id(element_id)
+    # expect(element.get_attribute('value')).to_equal(text_string)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element_value(
+            (By.ID, element_id),
+            text_string
+        )
+    )
+    expect(found).to_be(True)
 
 @then('I should see the "{message}"')
 def step_impl(context, message):
-    element = context.driver.find_element_by_id('flash_message')
-    expect(element.text).to_contain(message)
-    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.text_to_be_present_in_element(
-    #         (By.ID, 'flash_message'),
-    #         message
-    #     )
-    # )
-    # expect(found).to_be(True)
+    # element = context.driver.find_element_by_id('flash_message')
+    # expect(element.text).to_contain(message)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'flash_message'),
+            message
+        )
+    )
+    expect(found).to_be(True)
 
 @when('I change "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
     element_id = 'inventory_' + element_name.lower()
     element = context.driver.find_element_by_id(element_id)
-    # element = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.presence_of_element_located((By.ID, element_id))
-    # )
+    element = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.presence_of_element_located((By.ID, element_id))
+    )
     element.clear()
     element.send_keys(text_string)
