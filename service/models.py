@@ -186,7 +186,7 @@ class Inventory(object):
         """
         Initialized Coundant database connection
         """
-        SPACE = os.getenv('SPACE', 'dev')
+        SPACE = os.getenv('SPACE', 'DEV')
         dbname = 'inventory_'+SPACE
         opts = {}
         vcap_services = {}
