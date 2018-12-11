@@ -34,7 +34,7 @@ class InventoryCollection(Resource):
             try:
               inventories = Inventory.find_by_condition(condition)
             except DataValidationError as error:
-                return jsonify({'error' : str(error)}), status.HTTP_400_BAD_REQUEST
+                return {'message' : str(error)}, status.HTTP_400_BAD_REQUEST
         else:
             inventories = Inventory.all()
 

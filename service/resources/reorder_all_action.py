@@ -22,4 +22,4 @@ class ReorderAllAction(Resource):
         app.logger.info('Reordering Items')
 
         Inventory.reorder_items()
-        return jsonify({}),status.HTTP_200_OK
+        return {},status.HTTP_200_OK

@@ -47,7 +47,8 @@ inventory_model = api.model('Inventory', {
     'reorder_point': fields.Integer(required=True,
                                 description='Reorder point'),
     'condition': fields.String(required=True,
-                              description='The condition of item')
+                              description='The condition of item'),
+    'message': fields.String(required=True, description='error message')
 })
 
 inventory_args = reqparse.RequestParser()
