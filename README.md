@@ -10,7 +10,8 @@ The inventory API provides service to keep track of resources in warehouse.
 * [Create Inventory Item](#create-inventory-item)
 * [Update Inventory Item](#update-inventory-item)
 * [Delete Inventory Item](#delete-inventory-item)
-* [GET Reorder List](#get-reorder-list)
+* [Reorder one inventory item](#reorder-one-inventory-item)
+* [Reorder all inventory items](#reorder-all-inventory-items)
 
 ## Description
 Inventory is a Microservice built using 12 factor standards and accessible via RESTful API calls. Inventory service provides access to inventory of e-commerce website by RESTful API calls to Create, Read, Update, Delete, List and Query inventory.
@@ -31,35 +32,42 @@ Get call to `/inventory` allows to retrieve items from the inventory list. Follo
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory | GET | NA | list of all the inventory items |
-| /inventory/\<int::inventory_id> | GET | NA | inventory represented by ID or 404 not found if it does not exists |
-| /inventory | GET | condition in ('new', 'used', 'open-box') | list of inventory items in condition specified by parameter |
+| /api/inventory | GET | NA | list of all the inventory items |
+| /api/inventory/\<int::inventory_id> | GET | NA | inventory represented by ID or 404 not found if it does not exists |
+| /api/inventory | GET | condition in ('new', 'used', 'open-box') | list of inventory items in condition specified by parameter |
 
 ## Create Inventory Item
 It allows to create new inventory item.
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | list of all the inventory items |
+| /api/inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | list of all the inventory items |
 
 ## Update Inventory Item
 It allows to update existing inventory item
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory/\<int::inventory_id> | PUT | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | Updated inventory item |
+| /api/inventory/\<int::inventory_id> | PUT | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | Updated inventory item |
 
 ## Delete Inventory Item
 It allows to delete an inventory item
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory/\<int::inventory_id> | DELETE | NA | Empty response |
+| /api/inventory/\<int::inventory_id> | DELETE | NA | Empty response |
 
 
-## GET Reorder List
-It gives list of all items whose count is less than or equal to their re-order point i.e. it gives list of those inventories that require reordering.
+## Reorder one inventory item
+It allows reordering single inventory item whose count is less than or equal to restock level
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|
-| /inventory/reorder-list | GET | NA | List of all the items which requires reordering |
+| /api/inventory/\<int:inventory_id>/reorder | PUT | NA | Updated a specified inventory item |
+
+## Reorder all inventory items
+It allows reordering multiple inventory items whose count is less than or equal to restock level
+
+| url | method | parameter | result |
+|-----|--------|-----------|--------|
+| /api/inventory/reorder | PUT | NA | Updated multiple inventory items |
