@@ -112,7 +112,8 @@ class Inventory(object):
     @classmethod
     def find(cls, inventory_id):
         """ Finds a inventory by it's ID """
-        if cls.database is None:
+        if not cls.database:
+            cls.logger.info("Database not found")
             return None
         try:
             document = cls.database[str(inventory_id)]
