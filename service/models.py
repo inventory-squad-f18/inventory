@@ -72,7 +72,7 @@ class Inventory(object):
             document.update(doc)
             document.save()
         else:
-            self.logger.info("Saving :: " + str(document))
+            self.logger.info("Saving :: " + str(doc))
             document = self.database.create_document(doc)
 
 
@@ -155,6 +155,7 @@ class Inventory(object):
             for doc in cls.database:
                 if doc['_id'] == str(inventory_id) and doc['count'] <= doc['restock_level']:
                     doc['count'] = doc['restock_level']
+                    cls.logger.info("in reorder"+str(doc['count']))
                     doc.save()
         else:
             for doc in cls.database:
