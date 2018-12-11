@@ -49,6 +49,7 @@ class InventoryResource(Resource):
         """
         app.logger.info('Updating a inventory')
         inventory = Inventory.find(inventory_id)
+        app.logger.info(inventory)
         if inventory:
             payload = request.get_json()
             payload["id"]=inventory_id
