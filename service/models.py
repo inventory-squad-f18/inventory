@@ -72,7 +72,7 @@ class Inventory(object):
             document.update(doc)
             document.save()
         else:
-            # self.logger.info("Saving :: " + str(document))
+            self.logger.info("Saving :: " + str(document))
             document = self.database.create_document(doc)
 
 
