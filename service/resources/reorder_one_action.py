@@ -23,4 +23,4 @@ class ReorderOneAction(Resource):
         app.logger.info('Reordering Item :: ' + str(inventory_id))
 
         Inventory.reorder_items(inventory_id)
-        return jsonify({}),status.HTTP_200_OK
+        return {},status.HTTP_200_OK

@@ -57,13 +57,13 @@ class InventoryResource(Resource):
             try:
                 inventory.from_json(payload)
             except DataValidationError as error:
-                return jsonify({'error': str(error)}), status.HTTP_400_BAD_REQUEST
+                return {'message': str(error)}, status.HTTP_400_BAD_REQUEST
 
             inventory.save()
             message = inventory.to_json()
             return_code = status.HTTP_200_OK
         else:
-            message = {'error' : 'Inventory with id: %s was not found' % str(id)}
+            message = {'message' : 'Inventory with id: %s was not found' % str(inventory_id)}
             return_code = status.HTTP_404_NOT_FOUND
 
         return message, return_code
@@ -84,7 +84,7 @@ class InventoryResource(Resource):
             message = inventory.to_json()
             return_code = status.HTTP_200_OK
         else:
-            message = {'error' : 'inventory with id: %s was not found' % str(inventory_id)}
+            message = {'message' : 'inventory with id: %s was not found' % str(inventory_id)}
             return_code = status.HTTP_404_NOT_FOUND
 
         app.logger.info(message)

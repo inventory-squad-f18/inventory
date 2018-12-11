@@ -70,6 +70,7 @@ class TestInventoryService(unittest.TestCase):
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
         # Check the data is correct
+        new_inventory['message'] = None
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['id'], 101)
         self.assertEqual(new_json['count'], 1000)

@@ -16,6 +16,12 @@ Background:
         And I press the "Retrieve" button
         Then I should see "open-box" in the "Condition" field
 
+    Scenario: Get Inventory that does not exist
+        When I visit the "Home Page"
+        And I set the "Id" to "104"
+        And I press the "Update" button
+        Then I should see the "Inventory with id: 104 was not found"
+
     Scenario: Create a Inventory
         When I visit the "Home Page"
         And I set the "Id" to "104"
@@ -32,6 +38,13 @@ Background:
         Then I should see "101" in the results
         And I should see "102" in the results
         And I should see "open-box" in the results
+
+    Scenario: List all inventories with invalid condition
+        When I visit the "Home Page"
+        And I set the "Id" to "102"
+        And I set the "Condition" to "abc"
+        And I press the "Search" button
+        Then I should see the "Invalid data: expected value of condition is 'new' or 'open-box' or 'used'"
 
     Scenario: Delete one Inventory
         When I visit the "Home Page"
@@ -52,6 +65,19 @@ Background:
         And I press the "Retrieve" button
         Then I should see "1001" in the "Count" field
 
+    Scenario: Update with Invalid data
+        When I visit the "Home Page"
+        And I set the "Id" to "102"
+        And I set the "Condition" to "abc"
+        And I press the "Update" button
+        Then I should see the "Invalid data: expected value of condition is 'new' or 'open-box' or 'used'"
+
+    Scenario: Update Inventory that does not exist
+        When I visit the "Home Page"
+        And I set the "Id" to "104"
+        And I press the "Update" button
+        Then I should see the "Inventory with id: 104 was not found"
+
     Scenario: Reorder one Inventory
         When I visit the "Home Page"
         And I set the "Id" to "103"
@@ -62,6 +88,7 @@ Background:
         When I set the "Id" to "103"
         And I press the "Retrieve" button
         Then I should see "100" in the "Count" field
+
     Scenario: Query inventory
         When I visit the "Home Page"
         And I set the "Condition" to "new"
