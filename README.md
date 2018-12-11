@@ -43,7 +43,7 @@ It allows to create new inventory item.
 | /inventory | POST | JSON {'id': \<int:id>, 'count': \<int:count>, 'restock_level': \<int:restock_level>, 'reorder_point': \<int:reorder_point>, 'condition': \<string:condition> } | list of all the inventory items |
 
 ## Update Inventory Item
-It allows to update an existing inventory item
+It allows to update existing inventory item
 
 | url | method | parameter | result |
 |-----|--------|-----------|--------|

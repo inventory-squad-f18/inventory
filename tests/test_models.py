@@ -55,36 +55,36 @@ class TestModels(unittest.TestCase):
         self.assertEqual(item.condition, "new")
         # try:
         #     self.assertRaises(DataValidationError, Inventory(id=1, data=100))
-        # except:
-        #     pass
+        # except Exception as e:
+        #    print e
         try:
             self.assertRaises(DataValidationError, Inventory("test", 1000, 100, 10, "new"))
-        except:
-            pass
+        except Exception as e:
+            print e
         # try:
         #     self.assertRaises(DataValidationError, Inventory(id=100, 1000, 10, "new"))
-        # except:
-        #     pass
+        # except Exception as e:
+        #    print e
         try:
             self.assertRaises(DataValidationError, Inventory(100, 1000, '100', 10, "new"))
-        except:
-            pass
+        except Exception as e:
+            print e
         try:
             self.assertRaises(DataValidationError, Inventory(100, '1000', 100, 10, "new"))
-        except:
-            pass
+        except Exception as e:
+            print e
         try:
             self.assertRaises(DataValidationError, Inventory(101, 1000, 100, "new", 100))
-        except:
-            pass
+        except Exception as e:
+            print e
         try:
             self.assertRaises(DataValidationError, Inventory(101, 1000, 100, 10, "test"))
-        except:
-            pass
+        except Exception as e:
+            print e
         try:
             self.assertRaises(DataValidationError, Inventory(101, 1000, 10, 1000, "new"))
-        except:
-            pass
+        except Exception as e:
+            print e
 
     def test_update_a_inventory(self):
         """ Update a Inventory """
@@ -159,13 +159,13 @@ class TestModels(unittest.TestCase):
         self.assertEqual(inventory.condition, "open-box")
         try:
             self.assertRaises(DataValidationError, inventory.from_json("test"))
-        except:
-            pass
+        except Exception as e:
+            print e
         data = {"id": 1, "count": 1000, "restock-point": 100, "reorder_point": 10, "condition": "open-box"}
         try:
             self.assertRaises(DataValidationError, inventory.from_json(data))
-        except:
-            pass
+        except Exception as e:
+            print e
 
 
     # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
