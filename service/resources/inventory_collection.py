@@ -6,7 +6,7 @@ from service import app, api, inventory_args, inventory_model
 from . import InventoryResource
 
 ######################################################################
-#  PATH: /inventory
+#  PATH: /api/inventory
 ######################################################################
 @api.route('/api/inventory', strict_slashes=False)
 class InventoryCollection(Resource):

@@ -57,7 +57,7 @@ class Inventory(object):
         """
         Saves a Inventory to the data store
         """
-        # if id is duplicate?, if needs update
+        # if id is duplicate?, it needs update
         try:
             document = self.database[str(self.id)]
             if not document.exists():
@@ -98,7 +98,6 @@ class Inventory(object):
             raise DataValidationError("Invalid data: expected dict, received " + type(json_val))
         try:
             Inventory.validate_data(json_val['count'], json_val['restock_level'], json_val['reorder_point'], json_val['condition'])
-            # self.id = json_val['id']
             self.count = json_val['count']
             self.restock_level = json_val['restock_level']
             self.reorder_point = json_val['reorder_point']
@@ -178,8 +177,9 @@ class Inventory(object):
     @classmethod
     def remove_all(cls):
         """ Removes all documents from the database (use for testing)  """
-        for document in cls.database:
-            document.delete()
+        if ('USER' in os.environ and os.environ['USER'] == 'vagrant') or ('SPACE' in os.environ and os.environ['SPACE'] == 'dev'):
+            for document in cls.database:
+                document.delete()
 
     @staticmethod
     def init_db():

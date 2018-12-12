@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
   # Setup a Python development environment
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
+
     apt-get update
     apt-get install -y git zip tree python-pip python-dev
     apt-get -y autoremove
