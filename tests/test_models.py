@@ -53,18 +53,10 @@ class TestModels(unittest.TestCase):
         self.assertEqual(item.restock_level, 100)
         self.assertEqual(item.reorder_point, 10)
         self.assertEqual(item.condition, "new")
-        # try:
-        #     self.assertRaises(DataValidationError, Inventory(id=1, data=100))
-        # except Exception as e:
-        #    print e
         try:
             self.assertRaises(DataValidationError, Inventory("test", 1000, 100, 10, "new"))
         except Exception as e:
             print e
-        # try:
-        #     self.assertRaises(DataValidationError, Inventory(id=100, 1000, 10, "new"))
-        # except Exception as e:
-        #    print e
         try:
             self.assertRaises(DataValidationError, Inventory(100, 1000, '100', 10, "new"))
         except Exception as e:
@@ -115,6 +107,7 @@ class TestModels(unittest.TestCase):
         item = Inventory(0, 1000, 100, 10, "new")
         item.save()
         self.assertEqual(len(Inventory.all()), 1)
+
         # delete the inventory and make sure it isn't in the database
         item.delete()
         self.assertEqual(len(Inventory.all()), 0)

@@ -5,7 +5,7 @@ from flask_restplus import Api, Resource, fields, reqparse
 from service import app, api, inventory_model
 
 ######################################################################
-#  PATH: /inventory/{id}/reorder
+#  PATH: /api/inventory/{id}/reorder
 ######################################################################
 @api.route('/api/inventory/<int:inventory_id>/reorder')
 @api.param('inventory_id', 'The Inventory identifier')

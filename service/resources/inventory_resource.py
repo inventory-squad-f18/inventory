@@ -1,3 +1,4 @@
+import os
 from flask import jsonify, request, make_response
 from flask_api import status
 from service.models import Inventory, DataValidationError
@@ -5,7 +6,7 @@ from flask_restplus import Resource
 from service import app, api, inventory_model
 
 ######################################################################
-#  PATH: /inventory/{id}
+#  PATH: /api/inventory/{id}
 ######################################################################
 @api.route('/api/inventory/<int:inventory_id>')
 @api.param('inventory_id', 'The Inventory identifier')
@@ -69,6 +70,9 @@ class InventoryResource(Resource):
         return message, return_code
 
 
+    #------------------------------------------------------------------
+    # GET AN EXISTING INVENTORY
+    #------------------------------------------------------------------
     @api.doc('get_inventory')
     @api.response(404, 'Inventory not found')
     @api.marshal_with(inventory_model)
@@ -79,7 +83,6 @@ class InventoryResource(Resource):
 
         inventory = Inventory.find(inventory_id)
 
-        # app.logger.info(inventory)
         if inventory:
             message = inventory.to_json()
             return_code = status.HTTP_200_OK
@@ -98,5 +101,9 @@ class ResetInventory(Resource):
     @api.response(204, 'Inventory deleted')
     def delete(self):
         """ Removes all pets from the database """
-        Inventory.remove_all()
-        return make_response('', status.HTTP_204_NO_CONTENT)
+        # app.logger.info(os.environ)
+        if ('USER' in os.environ and os.environ['USER'] == 'vagrant') or ('SPACE' in os.environ and os.environ['SPACE'] == 'dev'):
+            Inventory.remove_all()
+            return make_response('', status.HTTP_204_NO_CONTENT)
+        else:
+            return make_response('', status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -52,6 +52,7 @@ class TestInventoryService(unittest.TestCase):
         # when no inventory in
         resp = self.app.get('/api/inventory/100')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
         # when the specific inventory in
         item = Inventory(101, 1000, 100, 10, "used")
         item.save()
@@ -69,6 +70,7 @@ class TestInventoryService(unittest.TestCase):
         # Make sure location header is set
         location = resp.headers.get('Location', None)
         self.assertIsNotNone(location)
+
         # Check the data is correct
         new_inventory['message'] = None
         new_json = json.loads(resp.data)
@@ -87,11 +89,10 @@ class TestInventoryService(unittest.TestCase):
     def test_update_inventory(self):
         """ Update an existing Inventory """
         # create a inventory with id 101 first
-        # item = Inventory(id = 101, data=(1000, 100, 10, "new"))
-        # item.save()
         inventory1 = {"id": 101, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)
         resp = self.app.post('/api/inventory', data=data, content_type='application/json')
+
         # update the inventory with id 101
         new_inventory = {"count": 900, "restock_level": 90, "reorder_point": 9, "condition": "new"}
         data = json.dumps(new_inventory)
@@ -136,33 +137,11 @@ class TestInventoryService(unittest.TestCase):
         resp = self.app.delete('/api/inventory/1', content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
 
-
-    # def test_initialize_logging(self):
-    #     """ Test the Logging Service """
-    #
-    #     #test client does not have logger
-    #     #hence initialized it with flask application
-    #     self.app = Flask(__name__)
-    #     self.app.debug = False
-    #
-    #     #remove all the logger handlers so that the list of handlers is empty
-    #     handler_list = list(self.app.logger.handlers)
-    #     for log_handler in handler_list:
-    #         self.app.logger.removeHandler(log_handler)
-    #
-    #     #initialize and check whether there is atleast one logger handler
-    #     service.initialize_logging()
-    #     self.assertTrue(len(self.app.logger.handlers) == 1)
-    #
-    #     #test whether our function is removing previous handlers correctly
-    #     service.initialize_logging()
-    #     self.assertTrue(len(self.app.logger.handlers) == 1)
-
-
     def test_list_inventory(self):
         """ Test list inventory """
         self.assertEqual(self.get_inventory_count(), 0)
         self.assertEqual(self.get_inventory_count(condition = 'new'), 0)
+
         # create inventories
         inventory1 = {"id": 101, "count": 1000, "restock_level": 100, "reorder_point": 10, "condition": "new"}
         data = json.dumps(inventory1)

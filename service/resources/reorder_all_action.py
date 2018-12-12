@@ -5,7 +5,7 @@ from flask_restplus import Api, Resource, fields, reqparse
 from service import app, api, inventory_model
 
 ######################################################################
-#  PATH: /inventory/reorder
+#  PATH: /api/inventory/reorder
 ######################################################################
 @api.route('/api/inventory/reorder')
 class ReorderAllAction(Resource):
