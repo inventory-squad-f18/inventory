@@ -177,7 +177,7 @@ class Inventory(object):
     @classmethod
     def remove_all(cls):
         """ Removes all documents from the database (use for testing)  """
-        if ('USER' in os.environ and os.environ['USER'] == 'vagrant') or ('SPACE' in os.environ and os.environ['SPACE'] == 'dev'):
+        if 'SPACE' in os.environ and os.environ['SPACE'] == 'dev':
             for document in cls.database:
                 document.delete()
 

@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
   # Setup a Python development environment
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
+    sudo -H -u vagrant sh -c "echo 'export SPACE=dev' >> ~/.bashrc"
 
     apt-get update
     apt-get install -y git zip tree python-pip python-dev

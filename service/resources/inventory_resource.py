@@ -102,7 +102,7 @@ class ResetInventory(Resource):
     def delete(self):
         """ Removes all pets from the database """
         # app.logger.info(os.environ)
-        if ('USER' in os.environ and os.environ['USER'] == 'vagrant') or ('SPACE' in os.environ and os.environ['SPACE'] == 'dev'):
+        if 'SPACE' in os.environ and os.environ['SPACE'] == 'dev':
             Inventory.remove_all()
             return make_response('', status.HTTP_204_NO_CONTENT)
         else:
