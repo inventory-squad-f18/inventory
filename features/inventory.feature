@@ -80,6 +80,14 @@ Background:
 
     Scenario: Reorder one Inventory
         When I visit the "Home Page"
+        And I press the "Reorder" button
+        And I set the "Id" to "103"
+        And I press the "Retrieve" button
+        Then I should see the "Success"
+        and I should see "100" in the "Count" field
+
+    Scenario: Reorder one Inventory
+        When I visit the "Home Page"
         And I set the "Id" to "103"
         And I press the "Retrieve" button
         Then I should see "5" in the "Count" field

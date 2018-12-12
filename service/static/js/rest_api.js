@@ -172,15 +172,23 @@ $(function () {
     $("#reorder-btn").click(function () {
         var id = $("#inventory_id").val();
 
-        var data = {
-            "id": parseInt(id,10),
-        };
+        var urlString = "/api/inventory";
+
+        if(id == "") {
+            urlString += "/reorder";
+        } else {
+            urlString += "/" + id + "/reorder";
+        }
+
+        // var data = {
+        //     "id": parseInt(id,10),
+        // };
 
         var ajax = $.ajax({
                 type: "PUT",
-                url: "/api/inventory/" + id + "/reorder",
-                contentType:"application/json",
-                data: JSON.stringify(data)
+                url: urlString,
+                contentType:"application/json"
+                // data: JSON.stringify(data)
             });
 
         ajax.done(function(res){
@@ -193,7 +201,7 @@ $(function () {
         });
 
     });
-    
+
     // ****************************************
     // Search for a inventory
     // ****************************************
